@@ -1,0 +1,87 @@
+#        routerboard: yes
+#         board-name: OmniTIK 5
+#              model: OmniTIK U-5HnD r2
+#      serial-number: 7BD1089740A0
+#      firmware-type: ar9344L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = A84Z-K3BL
+#
+# model = OmniTIK U-5HnD r2
+# serial number = 7BD1089740A0
+/interface bridge
+add admin-mac=CC:2D:E0:3C:29:A9 auto-mac=no comment=defconf name=bridge
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n country=brazil disabled=no frequency=5300 frequency-mode=superchannel mode=ap-bridge ssid="OMINITIK CANA BRAVA" tx-power=30 tx-power-mode=all-rates-fixed wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether2 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full name=ether2-master
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full disabled=yes
+set [ find default-name=ether4 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full disabled=yes
+set [ find default-name=ether5 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full disabled=yes
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge comment=defconf interface=ether2-master
+add bridge=bridge comment=defconf interface=wlan1
+add bridge=bridge interface=ether3
+add bridge=bridge interface=ether4
+add bridge=bridge interface=ether5
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether2-master list=discover
+add interface=ether3 list=discover
+add interface=ether4 list=discover
+add interface=ether5 list=discover
+add interface=wlan1 list=discover
+add interface=bridge list=discover
+add interface=bridge list=mactel
+add interface=bridge list=mac-winbox
+/interface wireless access-list
+add comment="EDUCACAO CANA BRAVA ANT FABIO" interface=wlan1 mac-address=58:10:8C:39:96:D6 vlan-mode=no-tag
+add comment="ROSELI CARVALHO" interface=wlan1 mac-address=00:1A:3F:62:E1:24 vlan-mode=no-tag
+/ip address
+add address=10.119.20.3/24 comment=defconf interface=bridge network=10.119.20.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router
+/ip route
+add distance=1 gateway=10.119.20.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="OMINITIK CANA BRAVA" trap-version=2
+/system identity
+set name="OMINITIK CANA BRAVA"
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
