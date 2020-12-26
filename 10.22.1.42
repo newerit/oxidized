@@ -1,0 +1,107 @@
+#        routerboard: yes
+#              model: CRS317-1G-16S+
+#      serial-number: 8ED508C19890
+#      firmware-type: dx3230L
+#   factory-firmware: 6.41
+#   current-firmware: 6.44.5
+#   upgrade-firmware: 6.44.5
+# 
+#             channel: stable
+#   installed-version: 6.44.5
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = UHXN-YVC3
+#
+# model = CRS317-1G-16S+
+# serial number = 8ED508C19890
+/interface bridge
+add admin-mac=CC:2D:E0:AE:ED:0C auto-mac=no name=Trunk0 vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+set [ find default-name=sfp-sfpplus1 ] comment="Entrada de Link CP" speed=10Gbps
+set [ find default-name=sfp-sfpplus2 ] advertise=1000M-full,10000M-full comment="1009-PPPOE PIRIA" speed=10Gbps
+set [ find default-name=sfp-sfpplus3 ] auto-negotiation=no comment="SW-TORRE 5G"
+set [ find default-name=sfp-sfpplus4 ] advertise="10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,2500M-full,5000M-full,10000M-full" comment=CONCENTRADOR_PPPOE_GARRAFAO speed=10Gbps
+set [ find default-name=sfp-sfpplus5 ] comment=WEMERSON
+set [ find default-name=sfp-sfpplus6 ] advertise="10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,2500M-full,10000M-full" comment=RENATO speed=10Gbps
+set [ find default-name=sfp-sfpplus7 ] advertise="10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,2500M-full,5000M-full,10000M-full" comment=PTP_PIRIA rx-flow-control=auto speed=10Gbps tx-flow-control=auto
+set [ find default-name=sfp-sfpplus8 ] comment=OLT-GN speed=10Gbps
+set [ find default-name=sfp-sfpplus9 ] comment=LINK-CORPORATIVO
+set [ find default-name=sfp-sfpplus10 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus11 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus12 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus13 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus14 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus15 ] speed=10Gbps
+set [ find default-name=sfp-sfpplus16 ] speed=10Gbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=170.231.184.4 target=remote
+/interface bridge port
+add bridge=Trunk0 interface=ether1
+add bridge=Trunk0 interface=sfp-sfpplus1
+add bridge=Trunk0 interface=sfp-sfpplus2
+add bridge=Trunk0 interface=sfp-sfpplus3
+add bridge=Trunk0 interface=sfp-sfpplus4
+add bridge=Trunk0 interface=sfp-sfpplus5
+add bridge=Trunk0 frame-types=admit-only-vlan-tagged interface=sfp-sfpplus6 pvid=4040
+add bridge=Trunk0 interface=sfp-sfpplus7
+add bridge=Trunk0 interface=sfp-sfpplus8
+add bridge=Trunk0 interface=sfp-sfpplus9 pvid=601
+add bridge=Trunk0 interface=sfp-sfpplus10
+add bridge=Trunk0 interface=sfp-sfpplus11
+add bridge=Trunk0 interface=sfp-sfpplus12
+add bridge=Trunk0 interface=sfp-sfpplus13
+add bridge=Trunk0 interface=sfp-sfpplus14
+add bridge=Trunk0 interface=sfp-sfpplus15
+add bridge=Trunk0 interface=sfp-sfpplus16
+/interface bridge vlan
+add bridge=Trunk0 comment=TORRE_5G_GRUPO_VLANS tagged=sfp-sfpplus3,sfp-sfpplus4 vlan-ids="100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,1601,1602,1603"
+add bridge=Trunk0 comment=DEDICADOS tagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=1778,1604
+add bridge=Trunk0 comment=WEMERSON tagged=sfp-sfpplus1,sfp-sfpplus5 vlan-ids=1605
+add bridge=Trunk0 comment=GN_PPPOE_BGP tagged=sfp-sfpplus1,sfp-sfpplus4 vlan-ids=1400
+add bridge=Trunk0 comment=VLAN_RENATO tagged=sfp-sfpplus1,sfp-sfpplus6 vlan-ids=1401
+add bridge=Trunk0 comment=GN_PPPOE_BGP tagged=sfp-sfpplus2,sfp-sfpplus1 vlan-ids=1402
+add bridge=Trunk0 comment=VLANS_LIVRAMENTRO tagged=sfp-sfpplus3,sfp-sfpplus4 vlan-ids=1600,1500,116,4020
+add bridge=Trunk0 comment=GRUPO_VLAN_PIRIA_SWITCH_1100 tagged=sfp-sfpplus7,sfp-sfpplus2 vlan-ids=1201,1202,1203,1204,1205,1206,1207,1208,1209,1210,1212
+add bridge=Trunk0 tagged=sfp-sfpplus7,sfp-sfpplus1 vlan-ids=1213
+add bridge=Trunk0 comment=OLT_PIRIA_NAS_PIRI tagged=sfp-sfpplus2,sfp-sfpplus7 vlan-ids=1214
+add bridge=Trunk0 comment=VLANS_FTTH_PIRIA tagged=sfp-sfpplus7,sfp-sfpplus2 vlan-ids="1220,1221,1222,1223,1224,1225,1226,1227,1228,1229,1230,1231,1232,1233,1234,1235,1236,1237,1238"
+add bridge=Trunk0 comment=GLAUDSON tagged=sfp-sfpplus3,sfp-sfpplus1 vlan-ids=181
+add bridge=Trunk0 comment=OLT_GARRAFAO_NORTE tagged=sfp-sfpplus4,sfp-sfpplus8 vlan-ids=301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,3971
+add bridge=Trunk0 comment=VLAN_FTTH_ALDEIA tagged=sfp-sfpplus4,sfp-sfpplus5 vlan-ids=600
+add bridge=Trunk0 comment=VLAN-SWITCH-MB tagged=sfp-sfpplus4 untagged=sfp-sfpplus9 vlan-ids=601
+/ip address
+add address=10.22.1.42/30 interface=Trunk0 network=10.22.1.40
+/ip dns
+set servers=1.1.1.1
+/ip route
+add distance=1 gateway=10.22.1.41
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138-SPEEDNETPA_SWC-GN1 trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10138-SPEEDNETPA_SWC-GN1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set boot-os=router-os
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"170.231.184.4\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
