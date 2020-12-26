@@ -1,0 +1,83 @@
+#        routerboard: yes
+#         board-name: LDF 5
+#              model: RouterBOARD LDF-5nD
+#      serial-number: 816F0767B79A
+#      firmware-type: ar9344L
+#   factory-firmware: 3.35
+#   current-firmware: 3.35
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+#              status: ERROR: could not resolve dns name
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = RAUS-TISJ
+#
+# model = RouterBOARD LDF-5nD
+# serial number = 816F0767B79A
+/interface bridge
+add admin-mac=64:D1:54:A3:C7:CB auto-mac=no name=bridge1 protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] adaptive-noise-immunity=ap-and-client-mode ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5355 frequency-mode=superchannel ht-basic-mcs="mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=bridge nv2-cell-radius=20 nv2-downlink-ratio=30 radio-name="BOQUEIRAO OITI1" scan-list=5355 ssid="BOQUEIRAO OITI1" supported-rates-a/g="" wireless-protocol=nv2-nstreme wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface wireless nstreme
+set wlan1 disable-csma=yes
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+add name=WAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether1 list=discover
+add interface=bridge1 list=discover
+add interface=ether1 list=mactel
+add interface=ether1 list=mac-winbox
+add interface=wlan1 list=WAN
+/ip address
+add address=10.119.9.7/24 comment=defconf interface=ether1 network=10.119.9.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router
+/ip firewall nat
+# in/out-interface matcher not possible when interface (wlan1) is slave - use master instead (bridge1)
+add action=masquerade chain=srcnat comment="defconf: masquerade" out-interface=wlan1
+/ip route
+add check-gateway=ping distance=1 gateway=10.119.9.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="BOQUEIRAO BV" trap-version=2
+/system identity
+set name="BOQUEIRAO OITI"
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watch-address=10.119.9.1
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
