@@ -1,0 +1,76 @@
+#        routerboard: yes
+#         board-name: LDF 5
+#              model: RouterBOARD LDF-5nD
+#      serial-number: 8BB708533964
+#      firmware-type: ar9344L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = Q5CW-340A
+#
+# model = RouterBOARD LDF-5nD
+# serial number = 8BB708533964
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-onlyn channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5700 frequency-mode=superchannel mode=bridge nv2-cell-radius=10 radio-name="SAO LUIS TAB" ssid="SAO LUIS TAB" wireless-protocol=nv2-nstreme wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface list member
+add interface=ether1 list=WAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.27.5/24 interface=wlan1 network=10.119.27.0
+/ip dns
+set allow-remote-requests=yes servers=8.8.8.8,1.1.1.1
+/ip dns static
+add address=10.119.27.5 name=router.lan
+/ip route
+add distance=1 gateway=10.119.27.1
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location="TAB SAO LUIS" trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name="VARJOTA SAO LUIS"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
