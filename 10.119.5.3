@@ -1,0 +1,66 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: A1030AF91FD1
+#      firmware-type: ar9340
+#   factory-firmware: 6.42.10
+#   current-firmware: 6.47
+#   upgrade-firmware: 6.47
+# 
+#             channel: stable
+#   installed-version: 6.47
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = LGCL-V7X8
+#
+# model = 912UAG-5HPnD
+# serial number = A1030AF91FD1
+/interface bridge
+add admin-mac=74:4D:28:1D:41:FE auto-mac=no name=bridge
+/interface wireless
+set [ find default-name=wlan1 ] adaptive-noise-immunity=ap-and-client-mode ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-eC country=no_country_set disabled=no frequency=auto frequency-mode=superchannel ht-basic-mcs="mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=station-bridge radio-name=CAMPOSxBUQUEIRAO rx-chains=0,1 ssid="BOQUEIRAO CAMPOS" supported-rates-a/g="" tx-chains=0,1 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge interface=ether1
+add bridge=bridge interface=wlan1
+/interface detect-internet
+set detect-interface-list=all
+/ip address
+add address=10.119.5.3/24 interface=ether1 network=10.119.5.0
+/ip dns
+set servers=1.1.1.1
+/ip route
+add distance=1 gateway=10.119.5.1
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10118-NETSF-CAMP-BXV trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10118-NETSF-CAMP-BXV
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set auto-upgrade=yes
+/system watchdog
+set ping-start-after-boot=2m watch-address=10.119.5.1
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
