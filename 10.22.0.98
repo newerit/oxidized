@@ -1,0 +1,151 @@
+#        routerboard: yes
+#              model: OmniTIK U-5HnD
+#      serial-number: 46A6049B09C7
+#      firmware-type: ar7240
+#   factory-firmware: 3.10
+#   current-firmware: 6.44.5
+#   upgrade-firmware: 6.44.5
+# 
+#             channel: long-term
+#   installed-version: 6.44.5
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = FINE-5PPA
+#
+# model = OmniTIK U-5HnD
+# serial number = 46A6049B09C7
+/interface bridge
+add fast-forward=no mtu=1500 name=Bridge-Internet
+add fast-forward=no mtu=1500 name=Loopback
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5300 ht-basic-mcs=mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15 ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" max-station-count=200 mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#fbi130878kgbLITO# nv2-security=enabled radio-name="Omitik Livramento" rate-set=configured ssid=VIRTUAL_STAR_01 supported-rates-a/g="" wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether2 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether4 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether5 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface eoip
+add mac-address=FE:69:A1:3E:E6:D6 name=EoIP-2001-OmniTIK-Livramento remote-address=10.22.22.9 tunnel-id=2001
+/interface vlan
+add disabled=yes interface=wlan1 name=Vlan-13-GlauberCasa vlan-id=13
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+/interface wireless security-profiles
+set [ find default=yes ] authentication-types=wpa-psk,wpa2-psk mode=dynamic-keys supplicant-identity=MikroTik wpa-pre-shared-key=46A6049B09C7 wpa2-pre-shared-key=46A6049B09C7
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=aes-128-cbc
+/queue simple
+add disabled=yes limit-at=5M/5M max-limit=5M/5M name=GlauberCasa queue=default/default target=10.22.1.32/30
+add disabled=yes limit-at=512k/512k max-limit=512k/512k name=GlauberOficina queue=hotspot-default/hotspot-default target=10.22.1.36/30
+/routing ospf instance
+set [ find default=yes ] redistribute-static=as-type-1 router-id=10.22.22.20
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk write-access=yes
+add addresses=0.0.0.0/0 name=public write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set read policy="local,ssh,read,test,winbox,romon,tikapp,!telnet,!ftp,!reboot,!write,!policy,!password,!web,!sniff,!sensitive,!api,!dude"
+/interface bridge port
+add bridge=Bridge-Internet interface=wlan1
+add bridge=Bridge-Internet interface=EoIP-2001-OmniTIK-Livramento
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether1 list=discover
+add interface=ether2 list=discover
+add interface=ether3 list=discover
+add interface=ether4 list=discover
+add interface=ether5 list=discover
+add interface=Loopback list=discover
+add interface=Vlan-13-GlauberCasa list=discover
+add interface=ether1 list=mactel
+add interface=ether2 list=mactel
+add interface=ether1 list=mac-winbox
+add interface=ether3 list=mactel
+add interface=ether2 list=mac-winbox
+add interface=ether4 list=mactel
+add interface=ether3 list=mac-winbox
+add interface=ether5 list=mactel
+add interface=ether4 list=mac-winbox
+add interface=Vlan-13-GlauberCasa list=mactel
+add interface=ether5 list=mac-winbox
+add interface=EoIP-2001-OmniTIK-Livramento list=mactel
+add interface=Vlan-13-GlauberCasa list=mac-winbox
+add interface=EoIP-2001-OmniTIK-Livramento list=mac-winbox
+/interface wireless access-list
+add comment="GLAUBER CASA" interface=wlan1 mac-address=D4:CA:6D:AB:48:BE
+add comment=GLEUBIA interface=wlan1 mac-address=D4:CA:6D:CB:8E:75
+add comment=MAYNARA interface=wlan1 mac-address=D4:CA:6D:F4:B2:FF
+add comment=PASTOR interface=wlan1 mac-address=D4:CA:6D:C3:37:11
+add comment=ELIOMAR interface=wlan1 mac-address=4C:5E:0C:7C:DC:A3
+add comment=NENGA interface=wlan1 mac-address=4C:5E:0C:5B:97:E1
+add comment=GIOVANE interface=wlan1 mac-address=D4:CA:6D:07:82:45 vlan-mode=no-tag
+add comment="MARIA JANAYNE (CAPOTE)" interface=wlan1 mac-address=4C:5E:0C:C3:25:F3 vlan-mode=no-tag
+add comment="SITIO BELA VISTA" interface=wlan1 mac-address=E4:8D:8C:9A:53:F3 vlan-mode=no-tag
+add comment="GRA\C7A COLEGIO" interface=wlan1 mac-address=E4:8D:8C:95:D2:3F vlan-mode=no-tag
+add comment="NENA DO ASSIS" interface=wlan1 mac-address=4C:5E:0C:A0:B8:61 vlan-mode=no-tag
+add comment="DAMIANA FRANCISCA PAIVA DE MATOS" interface=wlan1 mac-address=00:0C:42:BD:1E:D1 vlan-mode=no-tag
+add comment=JOSAFA interface=wlan1 mac-address=6C:3B:6B:9F:50:6D vlan-mode=no-tag
+add comment=ELETROCENTER interface=wlan1 mac-address=E4:8D:8C:EC:C5:73 vlan-mode=no-tag
+/ip address
+add address=10.22.22.20 interface=Loopback network=10.22.22.20
+add address=10.22.0.98/30 interface=ether1 network=10.22.0.96
+add address=10.22.1.33/30 interface=Vlan-13-GlauberCasa network=10.22.1.32
+/ip dns
+set servers=8.8.8.8
+/ip ipsec policy
+set 0 dst-address=0.0.0.0/0 src-address=0.0.0.0/0
+/ip proxy
+set cache-path=web-proxy1
+/ip route
+add distance=111 gateway=10.22.0.97
+/ip service
+set www port=8088
+set api disabled=yes
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/mpls interface
+set [ find default=yes ] mpls-mtu=1550
+/routing ospf interface
+add network-type=point-to-point
+/routing ospf network
+add area=backbone network=10.22.22.20/32
+add area=backbone network=10.22.0.96/30
+add area=backbone network=10.22.1.32/30
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNETPA-VIRTUAL_STAR_01 trap-version=2
+/system clock
+set time-zone-autodetect=no time-zone-name=America/Sao_Paulo
+/system identity
+set name=10138_SPEEDNETPA-VIRTUAL_STAR_01
+/system leds
+set 0 interface=ether1
+set 1 interface=ether2
+set 2 interface=ether3
+set 3 interface=ether4
+set 4 interface=ether5
+/system logging
+add topics=account
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=long-term
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
+/tool romon port
+add
