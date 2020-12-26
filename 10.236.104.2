@@ -1,0 +1,132 @@
+#        routerboard: yes
+#              model: CRS317-1G-16S+
+#      serial-number: C0BA0BB2515B
+#      firmware-type: dx3230L
+#   factory-firmware: 6.45.4
+#   current-firmware: 6.45.4
+#   upgrade-firmware: 6.46.5
+# 
+#             channel: stable
+#   installed-version: 6.46.5
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U bridge port changed                      cassio           write              
+# U device removed                           cassio           write              
+# U device added                             cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device removed                           edilton          write              
+# U device added                             edilton          write              
+# U device changed                           edilton          write              
+# U device removed                           edilton          write              
+# U device added                             edilton          write              
+# U item added                               edilton          write              
+# U bridge port added                        edilton          write              
+# U device changed                           edilton          write              
+# U device changed                           edilton          write              
+# U device changed                           edilton          write              
+# U device changed                           edilton          write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U dns changed                              cassio           write              
+# U new script added                         cassio           write              
+# U new script scheduled                     cassio           write              
+# U changed email settings                   cassio           write              
+# U item changed                             cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U switch port changed                      cassio           write              
+# 
+# software id = 68BM-GQ3J
+#
+# model = CRS317-1G-16S+
+# serial number = C0BA0BB2515B
+/interface bridge
+add ingress-filtering=yes name=TRUNK protocol-mode=none vlan-filtering=yes
+/interface ethernet
+set [ find default-name=sfp-sfpplus1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,10000M-full comment="TAQUARI_317_PET - ROTA 10 G"
+set [ find default-name=sfp-sfpplus2 ] comment="COSTA_RICA - ROTA 10Gb"
+set [ find default-name=sfp-sfpplus3 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,10000M-full comment="COSTA_RICA - ROTA 10Gb" mac-address=C4:AD:34:4A:72:50
+set [ find default-name=sfp-sfpplus4 ] comment=COSTA
+set [ find default-name=sfp-sfpplus5 ] auto-negotiation=no comment=LINK-DEDICADO-WAGNER
+set [ find default-name=sfp-sfpplus6 ] auto-negotiation=no comment="LINK JULIO"
+set [ find default-name=sfp-sfpplus7 ] comment=sfp-sfpplus7
+set [ find default-name=sfp-sfpplus8 ] comment=sfp-sfpplus8
+set [ find default-name=sfp-sfpplus9 ] comment=sfp-sfpplus9
+set [ find default-name=sfp-sfpplus10 ] comment=sfp-sfpplus10
+set [ find default-name=sfp-sfpplus11 ] comment=sfp-sfpplus11
+set [ find default-name=sfp-sfpplus12 ] comment=sfp-sfpplus12
+set [ find default-name=sfp-sfpplus13 ] comment=sfp-sfpplus13
+set [ find default-name=sfp-sfpplus14 ] comment=sfp-sfpplus14
+set [ find default-name=sfp-sfpplus15 ] comment=sfp-sfpplus15
+set [ find default-name=sfp-sfpplus16 ] comment=sfp-sfpplus16
+/interface bonding
+add comment=TRANSPORTE-20GB-CS mode=802.3ad name=LAG-CS slaves=sfp-sfpplus3,sfp-sfpplus2 transmit-hash-policy=layer-2-and-3
+/interface vlan
+add comment=VLAN_GERENCIA interface=LAG-CS name=vlan1517 vlan-id=1517
+/interface ethernet switch port
+set 4 egress-rate=300.0Mbps ingress-rate=300.0Mbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=TRUNK interface=sfp-sfpplus1 pvid=4001
+add bridge=TRUNK interface=sfp-sfpplus5
+add bridge=TRUNK interface=LAG-CS
+add bridge=TRUNK interface=sfp-sfpplus6 pvid=1888
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=TRUNK disabled=yes tagged=sfp-sfpplus1,LAG-CS vlan-ids=401
+add bridge=TRUNK tagged=LAG-CS,sfp-sfpplus5 vlan-ids=308
+add bridge=TRUNK tagged=LAG-CS,sfp-sfpplus1 vlan-ids=311
+add bridge=TRUNK tagged=sfp-sfpplus1,LAG-CS vlan-ids=182
+add bridge=TRUNK tagged=LAG-CS,sfp-sfpplus1 vlan-ids=220
+add bridge=TRUNK tagged=LAG-CS,sfp-sfpplus1 vlan-ids=1517
+add bridge=TRUNK tagged=sfp-sfpplus6,LAG-CS vlan-ids=189
+/ip address
+add address=10.236.104.2/24 interface=vlan1517 network=10.236.104.0
+add address=192.168.50.1/24 disabled=yes interface=sfp-sfpplus5 network=192.168.50.0
+/ip dns
+set servers=45.236.180.10,1.1.1.1
+/ip firewall nat
+add action=dst-nat chain=dstnat disabled=yes dst-port=2326 protocol=tcp to-addresses=192.168.50.2 to-ports=8291
+/ip route
+add distance=1 gateway=10.236.104.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=SW-SDOM-TRANSP. trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=SW-SDOM-TRANSP.
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set boot-os=router-os
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+add interval=1d name=Backup_Email_SpeednetCR on-event=Backup_Email_SpeednetCR policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=oct/14/2019 start-time=13:21:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=Backup_Email_SpeednetCR owner=cassio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/export file=backup_mikrotik compact\r\n:log info message=\"Iniciando Backup por E-mail\"\r\n:delay 5s\r\n:global data [/system clock get date]\r\n:global hora [/system clock get time]\r\n:global nome [/system identity get name]\r\n\r\n\r\n/tool e-mail send to=\"nocspeednetcr@gmail.com\" subject=\"Backup do MikroTik \$nome - \$data \E0s \$hora\" body=\"Backup automatico do servidor \$me realizado \E0s \$hora de \$data.\" file=backup_mikrotik start-tls=yes\r\n\r\n\r\n\r\n"
+/tool e-mail
+set address=smtp.gmail.com from=bkpspeednetcr@gmail.com password=speedcr1234 port=587 start-tls=yes user=bkpspeednetcr@gmail.com
