@@ -1,0 +1,230 @@
+#        routerboard: yes
+#              model: CRS326-24S+2Q+
+#      serial-number: AEF60C23C0A8
+#      firmware-type: qca9531L
+#   factory-firmware: 6.45.8
+#   current-firmware: 6.45.8
+#   upgrade-firmware: 6.46.7
+# 
+#             channel: stable
+#   installed-version: 6.46.7
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port changed                      flavio           write              
+# U item changed                             flavio           write              
+# U device changed                           flavio           write              
+# U bridge port changed                      flavio           write              
+# U bridge port changed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port changed                      flavio           write              
+# U bridge port changed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port changed                      flavio           write              
+# U device changed                           flavio           write              
+# U item changed                             flavio           write              
+# U bridge port changed                      flavio           write              
+# U bridge port added                        flavio           write              
+# U device changed                           flavio           write              
+# U bridge port removed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port changed                      flavio           write              
+# U item changed                             flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port added                        flavio           write              
+# U device added                             flavio           write              
+# U bridge port removed                      flavio           write              
+# U bridge port removed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U item changed                             flavio           write              
+# U item changed                             flavio           write              
+# U item added                               flavio           write              
+# U bridge port added                        flavio           write              
+# U device changed                           flavio           write              
+# U device added                             flavio           write              
+# U bridge port removed                      flavio           write              
+# U bridge port removed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U address removed                          flavio           write              
+# U item added                               flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U bridge port added                        flavio           write              
+# U bridge port added                        flavio           write              
+# U device added                             flavio           write              
+# U bridge port removed                      flavio           write              
+# U bridge port removed                      flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device changed                           flavio           write              
+# U device added                             flavio           write              
+# 
+# software id = Y23J-7M2K
+#
+# model = CRS326-24S+2Q+
+# serial number = AEF60C23C0A8
+/interface bridge
+add admin-mac=48:8F:5A:3A:2C:14 auto-mac=no name=trunk vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether1 ] l2mtu=2028 mtu=2028
+set [ find default-name=qsfpplus1-1 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus1-2 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus1-3 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus1-4 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus2-1 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus2-2 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus2-3 ] l2mtu=9000 mtu=9000
+set [ find default-name=qsfpplus2-4 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus1 ] auto-negotiation=no comment=SFP12:BORDA l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus2 ] auto-negotiation=no comment=SFP11:BORDA l2mtu=9000 mac-address=48:8F:5A:3A:2C:F4 mtu=9000
+set [ find default-name=sfp-sfpplus3 ] auto-negotiation=no comment=SFP10:BORDA l2mtu=9000 mac-address=48:8F:5A:3A:2C:F4 mtu=9000
+set [ find default-name=sfp-sfpplus4 ] auto-negotiation=no comment=SFP9:BORDA l2mtu=9000 mac-address=48:8F:5A:3A:2C:F4 mtu=9000
+set [ find default-name=sfp-sfpplus5 ] auto-negotiation=no comment=SFP5:CCR1016:JUMP-VLAN-CX-PARA l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus6 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus7 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus8 ] auto-negotiation=no comment=R410 l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus9 ] comment=xgei_1/19/1 l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus10 ] comment=xgei_1/20/1 l2mtu=9000 mac-address=48:8F:5A:3A:2C:FC mtu=9000
+set [ find default-name=sfp-sfpplus11 ] auto-negotiation=no comment=REDE-METRO-1 l2mtu=9000 loop-protect=off mtu=9000
+set [ find default-name=sfp-sfpplus12 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus13 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus14 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus15 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus16 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus17 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus18 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus19 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus20 ] l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus21 ] comment=ETH6:VYOS l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus22 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full,10000M-full comment=ETH7:VYOS l2mtu=9000 mac-address=48:8F:5A:3A:2D:08 mtu=9000
+set [ find default-name=sfp-sfpplus23 ] comment=ETH4:VYOS l2mtu=9000 mtu=9000
+set [ find default-name=sfp-sfpplus24 ] comment=ETH5:VYOS l2mtu=9000 mac-address=48:8F:5A:3A:2D:0A mtu=9000
+/interface bonding
+add mode=802.3ad mtu=9000 name=LAG-BORDA slaves=sfp-sfpplus1,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 transmit-hash-policy=layer-2-and-3
+add mode=802.3ad mtu=9000 name=LAG-BRAS slaves=sfp-sfpplus23,sfp-sfpplus24 transmit-hash-policy=layer-2-and-3
+add lacp-rate=1sec mode=802.3ad mtu=9000 name=LAG-OLT slaves=sfp-sfpplus9,sfp-sfpplus10 transmit-hash-policy=layer-2-and-3
+add mode=802.3ad mtu=9000 name=LAG-UPLINK-OLT-BRAS slaves=sfp-sfpplus21,sfp-sfpplus22 transmit-hash-policy=layer-2-and-3
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=trunk comment=MGMT interface=ether1
+add bridge=trunk interface=qsfpplus1-1
+add bridge=trunk interface=qsfpplus1-2
+add bridge=trunk interface=qsfpplus1-3
+add bridge=trunk interface=qsfpplus1-4
+add bridge=trunk interface=qsfpplus2-1
+add bridge=trunk interface=qsfpplus2-2
+add bridge=trunk interface=qsfpplus2-3
+add bridge=trunk interface=qsfpplus2-4
+add bridge=trunk comment=JUMP-CX-PARA interface=sfp-sfpplus5 pvid=10
+add bridge=trunk interface=sfp-sfpplus6
+add bridge=trunk interface=sfp-sfpplus7
+add bridge=trunk interface=sfp-sfpplus8
+add bridge=trunk interface=sfp-sfpplus12
+add bridge=trunk interface=sfp-sfpplus13
+add bridge=trunk interface=sfp-sfpplus14
+add bridge=trunk interface=sfp-sfpplus15
+add bridge=trunk interface=sfp-sfpplus16
+add bridge=trunk interface=sfp-sfpplus17
+add bridge=trunk interface=sfp-sfpplus18
+add bridge=trunk interface=sfp-sfpplus19
+add bridge=trunk interface=sfp-sfpplus20
+add bridge=trunk interface=LAG-BORDA
+add bridge=trunk interface=LAG-BRAS
+add bpdu-guard=yes bridge=trunk interface=LAG-OLT restricted-tcn=yes
+add bpdu-guard=yes bridge=trunk interface=LAG-UPLINK-OLT-BRAS
+add bpdu-guard=yes bridge=trunk comment=REDE_MTRO interface=sfp-sfpplus11 pvid=10
+/interface bridge vlan
+add bridge=trunk comment=VYOS tagged=LAG-BORDA,LAG-BRAS vlan-ids=1001
+add bridge=trunk comment=VLAN-FTTH-OLT tagged=LAG-OLT,LAG-UPLINK-OLT-BRAS untagged=sfp-sfpplus11,sfp-sfpplus5 vlan-ids=10
+/ip address
+add address=10.158.0.14/30 interface=trunk network=10.158.0.12
+/ip route
+add distance=1 gateway=10.158.0.13
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10158-CLICKNET-SWC1 trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10158-CLICKNET-SWC1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set boot-os=router-os
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=NW_LOG_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source=":local saveSysLogs true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysLogs) do={/log print file=(\$sfname)\r\n  :log info message=\"ARQUIVO DE LOG CRIADO\"\r\n}\r\n:delay 5s;\r\n:local logFileName \"\"\r\n:foreach logName in=[/file find] do={\r\n  :set logFileName (\"/\".[/file get \$logName name])\r\n  :if ([:typeof [find \$logFileName \$sfname]] != \"null\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$logFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$logFileName upload=yes;\r\n    :log info message=\"Arquivo de LOG Enviado com Sucesso!\";\r\n  }\r\n}\r\n:delay 1s;\r\n:local delFileName \"\"\r\n:foreach delLogName in=[/file find] do={\r\n  :set delFileName (\"/\".[/file get \$delLogName name])\r\n  :if ([:typeof [find \$delFileName \$sfname]] != \"null\") do={\r\n    /file remove \$delLogName;\r\n    :log info message=\"Arquivo de LOG Removido!\";\r\n  }\r\n}"
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool graphing interface
+add
+/tool netwatch
+add comment="MKFULL - nao alterar - script responsavel por ativar as secrets caso o mikrotik perca conexao com o mkfull" down-script="/ppp secret enable\_[find where comment~\"^mkfull\"]\n/ip hotspot user enable [find where comment~\"^mkfull\"]" host=18.228.78.71 timeout=5s up-script="/ppp secret disable [find where comment~\"^mkfull\"]\n/ppp active remove [find radius=no]\n/ip hotspot user disable [find where comment~\"^mkfull\"]\n/ip hotspot active remove [find where comment~\"^mkfull\"]"
