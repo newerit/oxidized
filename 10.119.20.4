@@ -1,0 +1,79 @@
+#        routerboard: yes
+#         board-name: Groove 52
+#              model: Groove 52HPn r2
+#           revision: r2
+#      serial-number: 9016085D1BED
+#      firmware-type: ar9340L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = V3CT-23KH
+#
+# model = Groove 52HPn r2
+# serial number = 9016085D1BED
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-onlyn channel-width=20/40mhz-Ce country=brazil disabled=no frequency-mode=superchannel mode=station-bridge ssid="CANA BRAVA JUVENI" wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add comment=defconf interface=ether1 list=LAN
+add comment=defconf interface=wlan1 list=WAN
+add interface=ether1 list=discover
+add interface=bridge1 list=discover
+add interface=ether1 list=mactel
+add interface=ether1 list=mac-winbox
+/ip address
+add address=10.119.20.4/24 comment=defconf interface=ether1 network=10.119.20.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router.lan
+/ip route
+add distance=1 gateway=10.119.20.1
+add distance=1 gateway=10.119.20.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="CANA BRAVA JUVENI" trap-version=2
+/system identity
+set name="CANA BRAVA JUVENI"
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
