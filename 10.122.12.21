@@ -1,0 +1,64 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: 6037052F303C
+#      firmware-type: ar9340
+#   factory-firmware: 3.22
+#   current-firmware: 3.33
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = RQ4P-89EU
+#
+# model = 912UAG-5HPnD
+# serial number = 6037052F303C
+/interface bridge
+add admin-mac=E4:8D:8C:15:7C:CE auto-mac=no fast-forward=no name=bridge1 protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] adaptive-noise-immunity=ap-and-client-mode ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n basic-rates-a/g=54Mbps channel-width=20/40mhz-eC country=brazil disabled=no frequency=5540 frequency-mode=superchannel ht-basic-mcs="mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=bridge nv2-preshared-key=@#RM_CONNECT#@ nv2-security=enabled radio-name="912_POCINHO_ENVIA INDUA" rx-chains=0,1 scan-list=default,5200-5600 ssid=PTP_INDUA supported-rates-a/g=54Mbps tx-chains=0,1 tx-power=30 tx-power-mode=all-rates-fixed wds-mode=dynamic wireless-protocol=nv2
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface list
+add name=WAN
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/interface list member
+add interface=ether1 list=WAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.122.12.21/24 interface=wlan1 network=10.122.12.0
+/ip dns
+set servers=1.1.1.1,8.8.4.4
+/ip route
+add distance=1 gateway=10.122.12.254
+/ip ssh
+set forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10122-RMCONNECT-AP-PTP-IND trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10122-RMCONNECT-AP-PTP-IND
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
