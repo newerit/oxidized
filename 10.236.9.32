@@ -1,0 +1,118 @@
+#        routerboard: yes
+#         board-name: hEX
+#              model: RB750Gr3
+#      serial-number: 8AFF0A7A477F
+#      firmware-type: mt7621L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.47.4
+# 
+#             channel: stable
+#   installed-version: 6.47.4
+#      latest-version: 6.47.4
+#              status: System is already up to date
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U nat rule changed                         noc              write              
+# U nat rule changed                         noc              write              
+# U nat rule added                           cassio           write              
+# U changed email settings                   noc              write              
+# U log rule added                           noc              write              
+# U log action added                         noc              write              
+# U log action changed                       noc              write              
+# U log action changed                       noc              write              
+# U log action removed                       noc              write              
+# U SNTP client configuration changed        noc              write              
+# U log action added                         noc              write              
+# U changed snmp settings                    noc              write              
+# U changed snmp settings                    noc              write              
+# U changed snmp settings                    noc              write              
+# U changed snmp settings                    noc              write              
+# U changed snmp settings                    noc              write              
+# U item changed                             noc              write              
+# U user flavio changed                      noc              write              
+#                                                             policy             
+# U user flavio added                        noc              write              
+#                                                             policy             
+# U user newerit added                       noc              write              
+#                                                             policy             
+# U new script added                         noc              write              
+# U new script scheduled                     noc              write              
+# U new script scheduled                     noc              write              
+# U RouterBoard configuration changed        noc              write              
+# U SNTP client configuration changed        noc              write              
+# U system time zone settings changed        noc              write              
+# U changed system note settings             noc              write              
+# U system identity changed                  cassio           write              
+# U nat rule added                           cassio           write              
+# U address added                            cassio           write              
+# U device changed                           cassio           write              
+# 
+# software id = 3XQ8-GZTP
+#
+# model = RB750Gr3
+# serial number = 8AFF0A7A477F
+/interface bridge
+add name=bridge1
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+set [ find default-name=ether2 ] speed=100Mbps
+set [ find default-name=ether3 ] speed=100Mbps
+set [ find default-name=ether4 ] speed=100Mbps
+set [ find default-name=ether5 ] name=ether5-CACHOEIRINHA speed=100Mbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge1 interface=ether1
+add bridge=bridge1 interface=ether2
+add bridge=bridge1 interface=ether3
+add bridge=bridge1 interface=ether4
+add bridge=bridge1 interface=ether5-CACHOEIRINHA
+/ip neighbor discovery-settings
+set discover-interface-list=!dynamic
+/ip address
+add address=10.236.9.32/24 interface=bridge1 network=10.236.9.0
+add address=192.168.1.1/24 interface=ether5-CACHOEIRINHA network=192.168.1.0
+/ip dns
+set servers=1.1.1.1
+/ip firewall nat
+add action=dst-nat chain=dstnat disabled=yes dst-address=10.236.9.32 dst-port=6565 protocol=tcp to-addresses=192.168.1.22 to-ports=443
+add action=dst-nat chain=dstnat disabled=yes dst-address=10.236.9.32 dst-port=2077 protocol=tcp to-addresses=192.168.1.22 to-ports=443
+/ip route
+add distance=1 gateway=10.236.9.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=RB-LAGOINHA-RANCHO-ALEGRE trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=RB-LAGOINHA-RANCHO-ALEGRE
+/system logging
+add action=newerit topics=account,info
+/system note
+set show-at-login=no
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system resource irq rps
+set ether1 disabled=no
+set ether2 disabled=no
+set ether3 disabled=no
+set ether4 disabled=no
+set ether5-CACHOEIRINHA disabled=no
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
