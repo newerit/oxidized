@@ -1,0 +1,118 @@
+#        routerboard: yes
+#              model: CRS326-24G-2S+
+#      serial-number: 94550A880CF4
+#      firmware-type: dx3230L
+#   factory-firmware: 6.42.11
+#   current-firmware: 6.46.5
+#   upgrade-firmware: 6.46.5
+# 
+#             channel: stable
+#   installed-version: 6.46.5
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = XRJ6-PFYL
+#
+# model = CRS326-24G-2S+
+# serial number = 94550A880CF4
+/interface bridge
+add name=BR_PPPOE_PEDAGIO
+add ingress-filtering=yes name=TRUNK vlan-filtering=yes
+add name=bridge1
+/interface ethernet
+set [ find default-name=ether1 ] name=ether1-POE-iN speed=100Mbps
+set [ find default-name=ether2 ] comment="PTP-Costa rica" name=ether2-DIGITAL-VALE-300Mb speed=100Mbps
+set [ find default-name=ether3 ] comment=Local name=ether3-RB-GUZELA speed=100Mbps
+set [ find default-name=ether4 ] comment="PTP Chapdao" name=ether4-PTP-VINICIUS speed=100Mbps
+set [ find default-name=ether5 ] speed=100Mbps
+set [ find default-name=ether6 ] speed=100Mbps
+set [ find default-name=ether7 ] comment=PEDAGIO speed=100Mbps
+set [ find default-name=ether8 ] speed=100Mbps
+set [ find default-name=ether9 ] speed=100Mbps
+set [ find default-name=ether10 ] speed=100Mbps
+set [ find default-name=ether11 ] speed=100Mbps
+set [ find default-name=ether12 ] speed=100Mbps
+set [ find default-name=ether13 ] speed=100Mbps
+set [ find default-name=ether14 ] speed=100Mbps
+set [ find default-name=ether15 ] speed=100Mbps
+set [ find default-name=ether16 ] speed=100Mbps
+set [ find default-name=ether17 ] speed=100Mbps
+set [ find default-name=ether18 ] speed=100Mbps
+set [ find default-name=ether19 ] speed=100Mbps
+set [ find default-name=ether20 ] speed=100Mbps
+set [ find default-name=ether21 ] speed=100Mbps
+set [ find default-name=ether22 ] speed=100Mbps
+set [ find default-name=ether23 ] speed=100Mbps
+set [ find default-name=ether24 ] speed=100Mbps
+set [ find default-name=sfp-sfpplus1 ] comment="ANTIGO DIGITAL 4.5"
+set [ find default-name=sfp-sfpplus2 ] speed=10Gbps
+/interface vlan
+add interface=ether2-DIGITAL-VALE-300Mb name=vlan315-PPPOE vlan-id=315
+/interface ethernet switch port
+set 3 egress-rate=60.0Mbps ingress-rate=60.0Mbps
+/interface list
+add name=NO-NEIGHBORS
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=publicsss
+add addresses=::/0 name=neweritmk
+/system logging action
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=TRUNK interface=ether2-DIGITAL-VALE-300Mb
+add bridge=TRUNK interface=ether3-RB-GUZELA
+add bridge=TRUNK interface=ether4-PTP-VINICIUS pvid=1590
+add bridge=TRUNK interface=sfp-sfpplus1
+add bridge=bridge1 interface=ether9
+add bridge=bridge1 interface=ether10
+add bridge=BR_PPPOE_PEDAGIO interface=vlan315-PPPOE
+add bridge=BR_PPPOE_PEDAGIO interface=ether7
+/interface bridge vlan
+add bridge=TRUNK tagged=ether2-DIGITAL-VALE-300Mb,ether4-PTP-VINICIUS vlan-ids=310
+add bridge=TRUNK tagged=ether2-DIGITAL-VALE-300Mb,ether3-RB-GUZELA vlan-ids=311
+add bridge=TRUNK tagged=ether2-DIGITAL-VALE-300Mb,ether4-PTP-VINICIUS vlan-ids=313
+add bridge=TRUNK tagged=ether2-DIGITAL-VALE-300Mb,ether4-PTP-VINICIUS vlan-ids=312
+add bridge=TRUNK disabled=yes tagged=ether2-DIGITAL-VALE-300Mb,ether5 vlan-ids=309
+/interface ethernet switch rule
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=ether4-PTP-VINICIUS switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=ether2-DIGITAL-VALE-300Mb switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=ether3-RB-GUZELA switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=ether1-POE-iN switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=ether5 switch=switch1
+/interface list member
+add interface=ether4-PTP-VINICIUS list=NO-NEIGHBORS
+/ip address
+add address=10.130.0.39/27 comment=MONITORAMENTO_LIFE disabled=yes interface=TRUNK network=10.130.0.32
+add address=10.236.0.6/30 network=10.236.0.4
+add address=10.236.0.6/30 interface=TRUNK network=10.236.0.4
+/ip dns
+set servers=1.1.1.1
+/ip firewall nat
+add action=dst-nat chain=dstnat dst-port=2011 protocol=tcp to-addresses=10.236.13.2 to-ports=80
+add action=dst-nat chain=dstnat dst-port=2012 protocol=tcp to-addresses=10.236.13.3 to-ports=80
+/ip route
+add distance=1 gateway=10.236.0.5
+add distance=5 gateway=10.130.0.33
+/snmp
+set contact=suporte@newerit.com enabled=yes location=SW-GUZ-326 trap-community=neweritmk trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=SW-GUZ-326
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|\n                            +|  035 98471 8390   |"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set auto-upgrade=yes boot-os=router-os
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
