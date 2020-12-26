@@ -1,0 +1,70 @@
+#                 ;;; Warning: cpu not running at default frequency
+#        routerboard: yes
+#              model: 922UAGS-5HPacD
+#      serial-number: 77C1070A9B47
+#      firmware-type: qca9550
+#   factory-firmware: 3.34
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.46.6
+# 
+#             channel: stable
+#   installed-version: 6.46.6
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = ZH0C-9NMJ
+#
+# model = 922UAGS-5HPacD
+# serial number = 77C1070A9B47
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n channel-width=20/40mhz-Ce country=australia disabled=no frequency=5745 frequency-mode=superchannel mode=ap-bridge rx-chains=0,1 ssid=WIFI-CONNECT-BLV-PAINEL-18 tx-chains=0,1
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 hw=no interface=ether1
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface wireless access-list
+add comment="MARCOS CHACARA" forwarding=no interface=wlan1 mac-address=D4:CA:6D:8B:C4:93 vlan-mode=no-tag
+add comment="ROSIMEIRE BELA VISTA" forwarding=no interface=wlan1 mac-address=58:10:8C:61:8F:F8 vlan-mode=no-tag
+add comment="PASTELARIA BELA VISTA" forwarding=no interface=wlan1 mac-address=58:10:8C:81:75:80 vlan-mode=no-tag
+add comment="TALES DE JOAO PAULO" forwarding=no interface=wlan1 mac-address=80:2A:A8:30:70:D2 vlan-mode=no-tag
+add comment="SERGIO BELA VISTA" forwarding=no interface=wlan1 mac-address=18:0D:2C:BB:68:30 vlan-mode=no-tag
+add comment="DEBORA ENFRETE CONSTRUCOL" forwarding=no interface=wlan1 mac-address=F0:9F:C2:B0:F9:49 vlan-mode=no-tag
+add comment="PAULINHA RO" forwarding=no interface=wlan1 mac-address=58:10:8C:45:E6:4D vlan-mode=no-tag
+/ip address
+add address=10.192.2.14/30 interface=ether1 network=10.192.2.12
+/ip dns
+set servers=8.8.8.8
+/ip route
+add distance=1 gateway=10.192.2.13
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10112_WIFI-CONNECT-BLV-PAINEL-18 trap-version=2
+/system clock
+set time-zone-name=America/Cuiaba
+/system identity
+set name=10112_WIFI-CONNECT-BLV-PAINEL-18
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|\n                            +|  035 98471 8390   |"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set cpu-frequency=700MHz
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
