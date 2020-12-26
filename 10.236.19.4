@@ -1,0 +1,175 @@
+#        routerboard: yes
+#              model: RB3011UiAS
+#      serial-number: B88D0C81D865
+#      firmware-type: ipq8060
+#   factory-firmware: 6.45.8
+#   current-firmware: 6.45.8
+#   upgrade-firmware: 6.47.7
+# 
+#             channel: stable
+#   installed-version: 6.47.7
+#              status: ERROR: no internet connection
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U nat rule changed                         cassio           write              
+# U address changed                          cassio           write              
+# U nat rule changed                         noc              write              
+# U address changed                          noc              write              
+# U item changed                             cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port added                        cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule changed                         cassio           write              
+# U address added                            cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule removed                         cassio           write              
+# U nat rule removed                         cassio           write              
+# U nat rule moved                           cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule moved                           cassio           write              
+# U nat rule added                           cassio           write              
+# U address added                            cassio           write              
+# U bridge port removed                      cassio           write              
+# U device changed                           cassio           write              
+# U bridge port changed                      noc              write              
+# U bridge port changed                      noc              write              
+# U address added                            noc              write              
+# U address removed                          noc              write              
+# U device removed                           cassio           write              
+# U device removed                           cassio           write              
+# U bridge port removed                      cassio           write              
+# U bridge port removed                      cassio           write              
+# U bridge port added                        cassio           write              
+# U bridge port added                        cassio           write              
+# U device added                             cassio           write              
+# U device added                             cassio           write              
+# U address removed                          cassio           write              
+# U address removed                          cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule changed                         cassio           write              
+# U address added                            cassio           write              
+# U nat rule added                           cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule changed                         cassio           write              
+# U nat rule moved                           cassio           write              
+# U address added                            cassio           write              
+# U bridge port added                        cassio           write              
+# U bridge port changed                      cassio           write              
+# U device added                             cassio           write              
+# U device added                             cassio           write              
+# U item changed                             cassio           write              
+# U item changed                             cassio           write              
+# U bridge port added                        cassio           write              
+# U device changed                           cassio           write              
+# 
+# software id = KRF0-95LM
+#
+# model = RB3011UiAS
+# serial number = B88D0C81D865
+/interface bridge
+add admin-mac=48:8F:5A:6B:10:10 auto-mac=no name=TRUNK vlan-filtering=yes
+add name=TRUNK_BEIRA_RIO
+/interface ethernet
+set [ find default-name=ether2 ] comment=MIMOSA-LAGOA-BONITA
+set [ find default-name=ether3 ] comment=ether3
+set [ find default-name=ether4 ] comment=ether4
+set [ find default-name=ether5 ] comment=RB-750-CLIENTES
+set [ find default-name=ether7 ] comment=RADIO-DIGITAL-CR
+set [ find default-name=ether8 ] comment=ether8
+set [ find default-name=ether9 ] comment=PTP-BEIRA-RIO
+set [ find default-name=ether10 ] comment=ether10
+set [ find default-name=sfp1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment=RADIO-DIGITAL-CR
+/interface vlan
+add interface=ether2 name=vlan1591-BEIRA-RIO vlan-id=1591
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=TRUNK interface=ether2
+add bridge=TRUNK disabled=yes interface=sfp1
+add bridge=TRUNK interface=ether5
+add bridge=TRUNK_BEIRA_RIO interface=ether9
+add bridge=TRUNK_BEIRA_RIO interface=vlan1591-BEIRA-RIO
+add bridge=TRUNK interface=ether7
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=TRUNK tagged=ether5,ether2 vlan-ids=1590
+add bridge=TRUNK tagged=ether7,ether2 vlan-ids=1580
+/ip address
+add address=10.236.19.4/24 comment=GERENCIA interface=TRUNK network=10.236.19.0
+add address=192.168.190.2/24 comment=IP_BKP interface=TRUNK network=192.168.190.0
+add address=10.236.22.1/24 interface=ether9 network=10.236.22.0
+add address=192.168.10.2/24 disabled=yes interface=ether9 network=192.168.10.0
+add address=192.168.1.1/24 interface=ether9 network=192.168.1.0
+/ip dhcp-client
+add comment=defconf disabled=no interface=ether1
+/ip dns
+set servers=45.236.180.10,1.1.1.1
+/ip dns static
+add address=192.168.88.1 comment=defconf name=router.lan
+/ip firewall nat
+add action=masquerade chain=srcnat disabled=yes dst-address=10.236.101.0/24
+add action=dst-nat chain=dstnat dst-address=10.236.19.4 dst-port=8879 protocol=tcp to-addresses=10.236.22.7 to-ports=443
+/ip route
+add distance=4 gateway=10.236.19.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=RB-BONANZA-TRANSPORTE trap-version=2
+/system clock
+set time-zone-name=America/Campo_Grande
+/system identity
+set name=RB-BONANZA-TRANSPORTE
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|" show-at-login=no
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+add interval=1d name=Backup_Email_SpeednetCR on-event=Backup_Email_SpeednetCR policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=oct/14/2019 start-time=13:21:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=Backup_Email_SpeednetCR owner=cassio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/export file=backup_mikrotik compact\r\n:log info message=\"Iniciando Backup por E-mail\"\r\n:delay 5s\r\n:global data [/system clock get date]\r\n:global hora [/system clock get time]\r\n:global nome [/system identity get name]\r\n\r\n\r\n/tool e-mail send to=\"nocspeednetcr@gmail.com\" subject=\"Backup do MikroTik \$nome - \$data \E0s \$hora\" body=\"Backup automatico do servidor \$me realizado \E0s \$hora de \$data.\" file=backup_mikrotik start-tls=yes\r\n\r\n\r\n\r\n"
+/tool e-mail
+set address=smtp.gmail.com from=bkpspeednetcr@gmail.com password=speedcr1234 port=587 start-tls=yes user=bkpspeednetcr@gmail.com
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
