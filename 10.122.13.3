@@ -1,0 +1,56 @@
+#        routerboard: yes
+#         board-name: SXTsq 5
+#              model: RouterBOARD SXTsq 5HPnD
+#      serial-number: 8383081B9D1E
+#      firmware-type: ar9344L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.46.4
+# 
+#             channel: stable
+#   installed-version: 6.46.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = NEPB-CSCA
+#
+# model = RouterBOARD SXTsq 5HPnD
+# serial number = 8383081B9D1E
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 antenna-gain=0 band=5ghz-a/n channel-width=20/40mhz-eC country=no_country_set disabled=no frequency=5200 frequency-mode=manual-txpower installation=any mode=ap-bridge radio-name="RM_AP_SAO SEBASTIAO" ssid=RM_CONNECT wireless-protocol=802.11 wps-mode=disabled
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/ip address
+add address=10.122.13.3/24 interface=bridge1 network=10.122.13.0
+/ip route
+add distance=1 gateway=10.122.13.254
+/ip ssh
+set forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10122-RMCONNECT-PTMP-SSB-AP trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10122-RMCONNECT-PTMP-SSB-AP
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|\n                            +|  035 98471 8390   |"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
