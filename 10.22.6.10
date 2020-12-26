@@ -1,0 +1,102 @@
+#        routerboard: yes
+#              model: RouterBOARD 3011UiAS
+#      serial-number: 719F06068CB4
+#      firmware-type: ipq8060
+#   factory-firmware: 3.27
+#   current-firmware: 6.45.7
+#   upgrade-firmware: 6.45.7
+# 
+#             channel: stable
+#   installed-version: 6.45.7
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = A0DK-L3G6
+#
+# model = RouterBOARD 3011UiAS
+# serial number = 719F06068CB4
+/interface bridge
+add admin-mac=6C:3B:6B:08:34:0D auto-mac=no name=trunk priority=0x3000 vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether3 ] comment=PN1-STL
+set [ find default-name=ether4 ] comment=PN2-STL
+set [ find default-name=ether5 ] comment="PAINEL 3 SENTIDO IRITUIA"
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=trunk interface=ether2
+add bridge=trunk interface=ether3 pvid=121
+add bridge=trunk interface=ether4 pvid=122
+add bridge=trunk interface=ether5 pvid=123
+add bridge=trunk interface=ether6
+add bridge=trunk interface=ether7
+add bridge=trunk interface=ether8
+add bridge=trunk interface=ether9
+add bridge=trunk interface=ether10
+add bridge=trunk interface=sfp1
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=trunk tagged=sfp1 untagged=ether3 vlan-ids=121
+add bridge=trunk tagged=sfp1 untagged=ether4 vlan-ids=122
+add bridge=trunk tagged=sfp1 untagged=ether5 vlan-ids=123
+/interface list member
+add comment=defconf interface=trunk list=LAN
+add comment=defconf interface=ether1 list=WAN
+/ip address
+add address=10.22.6.10/30 interface=trunk network=10.22.6.8
+/ip dhcp-client
+add comment=defconf dhcp-options=hostname,clientid disabled=no interface=ether1
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 comment=defconf name=router.lan
+/ip firewall filter
+add action=accept chain=input comment="defconf: accept established,related,untracked" connection-state=established,related,untracked
+add action=drop chain=input comment="defconf: drop invalid" connection-state=invalid
+add action=accept chain=input comment="defconf: accept ICMP" protocol=icmp
+add action=accept chain=input comment="defconf: accept to local loopback (for CAPsMAN)" dst-address=127.0.0.1
+add action=drop chain=input comment="defconf: drop all not coming from LAN" in-interface-list=!LAN
+add action=accept chain=forward comment="defconf: accept in ipsec policy" ipsec-policy=in,ipsec
+add action=accept chain=forward comment="defconf: accept out ipsec policy" ipsec-policy=out,ipsec
+add action=fasttrack-connection chain=forward comment="defconf: fasttrack" connection-state=established,related
+add action=accept chain=forward comment="defconf: accept established,related, untracked" connection-state=established,related,untracked
+add action=drop chain=forward comment="defconf: drop invalid" connection-state=invalid
+add action=drop chain=forward comment="defconf: drop all from WAN not DSTNATed" connection-nat-state=!dstnat connection-state=new in-interface-list=WAN
+/ip route
+add distance=1 gateway=10.22.6.9
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNETPA-STALSW trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10138_SPEEDNETPA-STALSW
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
