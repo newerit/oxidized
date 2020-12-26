@@ -1,0 +1,63 @@
+#        routerboard: yes
+#              model: 922UAGS-5HPacD
+#      serial-number: 7F260799293B
+#      firmware-type: qca9550
+#   factory-firmware: 3.34
+#   current-firmware: 3.34
+#   upgrade-firmware: 3.34
+# 
+#             channel: current
+#   installed-version: 6.36.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = CEVE-B9WJ
+#
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5300 ht-basic-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#SPEEDNET@156789KGB@# nv2-security=enabled rate-set=configured rx-chains=0,1 ssid=SpeedNet_PN1-STL supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=170.231.184.4 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/interface wireless access-list
+add comment="FRANCISCO OLENILSON" interface=wlan1 mac-address=64:D1:54:5F:0C:8F vlan-mode=no-tag
+add comment="jose carlos farmacia" interface=wlan1 mac-address=6C:3B:6B:01:E0:73 vlan-mode=no-tag
+add comment="RENAN SSB" interface=wlan1 mac-address=4C:5E:0C:5A:D9:93 vlan-mode=no-tag
+/ip address
+add address=10.22.0.2/30 interface=bridge1 network=10.22.0.0
+/ip route
+add distance=1 gateway=10.22.0.1
+/ip service
+set telnet address=0.0.0.0/0
+set ftp address=0.0.0.0/0
+set www address=0.0.0.0/0 port=8088
+set ssh address=0.0.0.0/0
+set www-ssl address=0.0.0.0/0 disabled=no
+set api address=0.0.0.0/0
+set winbox address=0.0.0.0/0
+set api-ssl address=0.0.0.0/0
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138_SPEEDNETPA-SpeedNet_PN1-STL trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10138_SPEEDNETPA-SpeedNet_PN1-STL
+/system logging
+add topics=account
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set cpu-frequency=720MHz init-delay=0s protected-routerboot=disabled
