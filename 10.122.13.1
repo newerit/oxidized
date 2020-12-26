@@ -1,0 +1,61 @@
+#        routerboard: yes
+#         board-name: SXT Lite5
+#              model: SXT 5nD r2
+#      serial-number: 5E9C050C803C
+#      firmware-type: ar9344
+#   factory-firmware: 3.24
+#   current-firmware: 3.24
+#   upgrade-firmware: 6.44.3
+# 
+#             channel: stable
+#   installed-version: 6.44.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = BR6M-X9CT
+#
+# model = SXT 5nD r2
+# serial number = 5E9C050C803C
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n basic-rates-a/g=18Mbps,24Mbps,36Mbps,48Mbps,54Mbps channel-width=20/40mhz-eC country=brazil disabled=no frequency=5680 frequency-mode=superchannel mode=station-bridge nv2-preshared-key=00616386257 nv2-security=enabled radio-name="RM_CONNECT _AP_SSB" rate-set=configured ssid=RMCONECT-PTPSSB supported-rates-a/g=18Mbps,24Mbps,36Mbps,48Mbps,54Mbps tdma-period-size=1 wireless-protocol=nv2
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/ip address
+add address=10.122.13.1/24 interface=bridge1 network=10.122.13.0
+/ip dns
+set servers=1.1.1.1,8.8.8.8
+/ip route
+add distance=1 gateway=10.122.13.254
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10122-RMCONNECT-PTP-SSB-AP trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10122-RMCONNECT-PTP-SSB-AP
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool graphing interface
+add
+/tool netwatch
+add comment="MKFULL - nao alterar - script responsavel por ativar as secrets caso o mikrotik perca conexao com o mkfull" down-script="/ppp secret enable\_[find where comment~\"^mkfull\"]\n/ip hotspot user enable [find where comment~\"^mkfull\"]" host=18.228.78.71 timeout=5s up-script="/ppp secret disable [find where comment~\"^mkfull\"]\n/ppp active remove [find radius=no]\n/ip hotspot user disable [find where comment~\"^mkfull\"]\n/ip hotspot active remove [find where comment~\"^mkfull\"]"
