@@ -1,0 +1,90 @@
+#        routerboard: yes
+#         board-name: OmniTIK 5
+#              model: OmniTIK U-5HnD r2
+#      serial-number: 7BD007CABEED
+#      firmware-type: ar9344L
+#   factory-firmware: 3.35
+#   current-firmware: 6.45.1
+#   upgrade-firmware: 6.48
+# 
+#             channel: stable
+#   installed-version: 6.48
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 6L2J-R0VR
+#
+# model = OmniTIK U-5HnD r2
+# serial number = 7BD007CABEED
+/interface bridge
+add admin-mac=64:D1:54:92:8A:29 auto-mac=no name=bridge
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 antenna-gain=0 band=5ghz-a/n country=brazil disabled=no frequency=5180 frequency-mode=superchannel installation=any mode=ap-bridge ssid="N SYSTEM TAPERA 5.8" station-roaming=enabled wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether3 ] disabled=yes
+set [ find default-name=ether4 ] disabled=yes
+set [ find default-name=ether5 ] disabled=yes
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge comment=defconf interface=ether2
+add bridge=bridge comment=defconf interface=ether3
+add bridge=bridge comment=defconf interface=ether4
+add bridge=bridge comment=defconf interface=ether5
+add bridge=bridge comment=defconf interface=wlan1
+add bridge=bridge interface=ether1
+/ip neighbor discovery-settings
+set discover-interface-list=LAN
+/interface list member
+add comment=defconf interface=ether1 list=WAN
+add interface=ether2 list=LAN
+add interface=ether3 list=LAN
+add interface=ether4 list=LAN
+add interface=ether5 list=LAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.9.25/24 interface=ether2 network=10.119.9.0
+/ip dhcp-client
+add interface=bridge
+/ip dns
+set servers=1.1.1.1
+/ip dns static
+add address=10.119.9.25 name=router.lan
+/ip route
+add distance=1 gateway=10.119.9.1
+/ip ssh
+set forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location="OMINITIK TAPERA" trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10118-NETSF-OMNITIK-TAPERA
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
