@@ -1,0 +1,57 @@
+#        routerboard: yes
+#         board-name: LDF 5
+#              model: RouterBOARD LDF-5nD
+#      serial-number: 8BB70815ECC4
+#      firmware-type: ar9344L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+#              status: ERROR: could not resolve dns name
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 0YSX-7CGT
+#
+# model = RouterBOARD LDF-5nD
+# serial number = 8BB70815ECC4
+/interface bridge
+add admin-mac=CC:2D:E0:4A:CE:8D auto-mac=no name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-onlyn channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5600 frequency-mode=superchannel mode=bridge nv2-cell-radius=20 ssid="MORADA NOVA VITORIA" wireless-protocol=nv2-nstreme
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/ip address
+add address=10.119.29.5/24 interface=bridge1 network=10.119.29.0
+/ip route
+add distance=1 gateway=10.119.29.1
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location="MORADA NOVA VITORIA" trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name="MORADA NOVA VITORIA"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
