@@ -1,0 +1,78 @@
+#        routerboard: yes
+#              model: 912UAG-5HPnD
+#      serial-number: 4DEC01382C0D
+#      firmware-type: ar9340
+#   factory-firmware: 3.10
+#   current-firmware: 6.47.8
+#   upgrade-firmware: 6.47.8
+# 
+#             channel: long-term
+#   installed-version: 6.47.8
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = U9AS-S28N
+#
+# model = 912UAG-5HPnD
+# serial number = 4DEC01382C0D
+/interface bridge
+add name=Bridge
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-eC comment="PAINEL-2 SENTIDO LEANDRO" country=brazil disabled=no frequency=5520 frequency-mode=manual-txpower hide-ssid=yes ht-basic-mcs="mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-3,mcs-4,mcs-5,mcs-6,mcs-7,mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#Fbi988180789Kgb-NH nv2-security=enabled radio-name=NVH-190 rate-set=configured rx-chains=0,1 ssid=SPEEDNET_5G_PN2 supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless manual-tx-power-table
+set wlan1 comment="PAINEL-2 SENTIDO LEANDRO"
+/interface wireless nstreme
+set wlan1 comment="PAINEL-2 SENTIDO LEANDRO"
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=Bridge interface=ether1
+add bridge=Bridge interface=wlan1
+add bridge=Bridge interface=*4
+add bridge=Bridge interface=*5
+add bridge=Bridge interface=*6
+/interface wireless access-list
+add signal-range=-70..110
+/ip address
+add address=10.22.0.190/30 interface=Bridge network=10.22.0.188
+/ip route
+add distance=1 gateway=10.22.0.189
+/ip service
+set api disabled=yes
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNET_NVH_190 trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10138_SPEEDNET_NVH_190
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=long-term
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=NW_LOG_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source=":local saveSysLogs true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysLogs) do={/log print file=(\$sfname)\r\n  :log info message=\"ARQUIVO DE LOG CRIADO\"\r\n}\r\n:delay 5s;\r\n:local logFileName \"\"\r\n:foreach logName in=[/file find] do={\r\n  :set logFileName (\"/\".[/file get \$logName name])\r\n  :if ([:typeof [find \$logFileName \$sfname]] != \"null\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$logFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$logFileName upload=yes;\r\n    :log info message=\"Arquivo de LOG Enviado com Sucesso!\";\r\n  }\r\n}\r\n:delay 1s;\r\n:local delFileName \"\"\r\n:foreach delLogName in=[/file find] do={\r\n  :set delFileName (\"/\".[/file get \$delLogName name])\r\n  :if ([:typeof [find \$delFileName \$sfname]] != \"null\") do={\r\n    /file remove \$delLogName;\r\n    :log info message=\"Arquivo de LOG Removido!\";\r\n  }\r\n}"
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool graphing interface
+add
+/tool netwatch
+add comment="MKFULL - nao alterar - script responsavel por ativar as secrets caso o mikrotik perca conexao com o mkfull" down-script="/ppp secret enable\_[find where comment~\"^mkfull\"]\n/ip hotspot user enable [find where comment~\"^mkfull\"]" host=18.228.78.71 timeout=5s up-script="/ppp secret disable [find where comment~\"^mkfull\"]\n/ppp active remove [find radius=no]\n/ip hotspot user disable [find where comment~\"^mkfull\"]\n/ip hotspot active remove [find where comment~\"^mkfull\"]"
