@@ -1,0 +1,68 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: 77CC08643B4D
+#      firmware-type: ar9340
+#   factory-firmware: 3.41
+#   current-firmware: 6.47
+#   upgrade-firmware: 6.47
+# 
+#             channel: stable
+#   installed-version: 6.47
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = RDE5-DJL8
+#
+# model = 912UAG-5HPnD
+# serial number = 77CC08643B4D
+/interface bridge
+add admin-mac=CC:2D:E0:40:C1:12 auto-mac=no comment=defconf name=bridge
+/interface wireless
+set [ find default-name=wlan1 ] band=5ghz-a/n channel-width=20/40mhz-eC country=brazil disabled=no frequency=5540 frequency-mode=superchannel mode=ap-bridge rx-chains=0,1 ssid="NSYSTEM PAINEL CAMPOS" tx-chains=0,1 tx-power=27 tx-power-mode=all-rates-fixed wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface list
+add name=WAN
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge comment=defconf hw=no interface=ether1
+add bridge=bridge comment=defconf interface=wlan1
+/interface list member
+add interface=ether1 list=WAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.5.6/24 interface=wlan1 network=10.119.5.0
+/ip dns
+set servers=1.1.1.1
+/ip route
+add distance=1 gateway=10.119.5.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="PAINEL 5,8 CAMPOS" trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name="PAINEL 5,8 CAMPOS"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set auto-upgrade=yes
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
