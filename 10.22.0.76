@@ -1,0 +1,115 @@
+#        routerboard: yes
+#              model: CCR1036-12G-4S
+#      serial-number: 6AA705CE566A
+#      firmware-type: tilegx
+#   factory-firmware: 3.27
+#   current-firmware: 6.45.3
+#   upgrade-firmware: 6.45.3
+# 
+#             channel: stable
+#   installed-version: 6.45.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U device changed                           glauberalencar   write              
+# U bridge port added                        glauberalencar   write              
+# U bridge port changed                      glauberalencar   write              
+# U bridge port changed                      glauberalencar   write              
+# U bridge port changed                      glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U bridge port added                        glauberalencar   write              
+# 
+# software id = Y753-M3JS
+#
+# model = CCR1036-12G-4S
+# serial number = 6AA705CE566A
+/interface bridge
+add name=BR-DHCP_GLAUBER
+add name=Trunk-Vlans protocol-mode=none vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment=SW-ESCRITORIO
+set [ find default-name=ether2 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment=ROTEADOR-PISCINA speed=100Mbps
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment="ROTEADOR ESCRITORIO"
+set [ find default-name=ether4 ] comment=DVR
+set [ find default-name=ether6 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+set [ find default-name=ether10 ] advertise=10M-full auto-negotiation=no speed=10Mbps
+set [ find default-name=sfp1 ] advertise=10M-full,100M-full,1000M-full comment=LINK-SW-GN
+set [ find default-name=sfp2 ] advertise=10M-full,100M-full,1000M-full comment=SAIDA-SW-3011
+set [ find default-name=sfp3 ] advertise=10M-full,100M-full,1000M-full l2mtu=1588
+set [ find default-name=sfp4 ] advertise=10M-full,100M-full,1000M-full comment="SAIDA-DEDICADO(GLAUDSON)"
+/ip pool
+add name=dhcp_pool0 ranges=192.168.4.2-192.168.4.254
+/ip dhcp-server
+add address-pool=dhcp_pool0 disabled=no interface=BR-DHCP_GLAUBER lease-time=4w2d name=DHCP_CASA_GLAUBER
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=Trunk-Vlans hw=no interface=sfp1
+add bridge=Trunk-Vlans disabled=yes interface=ether11 pvid=116
+add bridge=Trunk-Vlans hw=no interface=sfp2
+add bridge=BR-DHCP_GLAUBER interface=ether4
+add bridge=BR-DHCP_GLAUBER interface=ether1
+add bridge=BR-DHCP_GLAUBER interface=ether2
+add bridge=BR-DHCP_GLAUBER interface=ether3
+add bridge=Trunk-Vlans interface=ether10 pvid=4020
+add bridge=Trunk-Vlans hw=no interface=sfp4 pvid=181
+add bridge=BR-DHCP_GLAUBER interface=ether5
+add bridge=BR-DHCP_GLAUBER interface=ether6
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=Trunk-Vlans tagged=sfp1 untagged=sfp3 vlan-ids=1500
+add bridge=Trunk-Vlans tagged=sfp1 untagged=sfp4 vlan-ids=181
+add bridge=Trunk-Vlans tagged=sfp1 untagged=ether11 vlan-ids=116
+add bridge=Trunk-Vlans tagged=sfp1 untagged=ether10 vlan-ids=4020
+/ip address
+add address=10.22.0.76/29 interface=Trunk-Vlans network=10.22.0.72
+add address=192.168.4.1/24 interface=BR-DHCP_GLAUBER network=192.168.4.0
+/ip dhcp-server lease
+add address=192.168.4.231 client-id=1:94:46:96:8d:81:ae mac-address=94:46:96:8D:81:AE server=DHCP_CASA_GLAUBER
+add address=192.168.4.225 client-id=1:94:46:96:8d:81:96 mac-address=94:46:96:8D:81:96 server=DHCP_CASA_GLAUBER
+add address=192.168.4.232 client-id=1:90:2b:34:fe:ad:6e mac-address=90:2B:34:FE:AD:6E server=DHCP_CASA_GLAUBER
+add address=192.168.4.219 client-id=1:b8:97:5a:fe:fd:59 mac-address=B8:97:5A:FE:FD:59 server=DHCP_CASA_GLAUBER
+add address=192.168.4.217 client-id=1:18:d:2c:41:ea:d5 mac-address=18:0D:2C:41:EA:D5 server=DHCP_CASA_GLAUBER
+add address=192.168.4.216 client-id=1:24:fd:d:97:37:e8 mac-address=24:FD:0D:97:37:E8 server=DHCP_CASA_GLAUBER
+/ip dhcp-server network
+add address=192.168.4.0/24 dns-server=10.22.1.38,8.8.8.8 gateway=192.168.4.1
+/ip dns
+set servers=10.22.1.38,8.8.8.8
+/ip firewall filter
+add action=fasttrack-connection chain=forward connection-state=established,related
+add action=accept chain=forward connection-state=established,related
+/ip firewall nat
+add action=masquerade chain=srcnat
+/ip route
+add distance=1 gateway=10.22.0.73
+/ip service
+set api disabled=yes
+/lcd
+set time-interval=daily
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138-SPEEDNETPA-SWLIVRA trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10138-SPEEDNETPA-SWLIVRA
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:07:20
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+add interval=30m name=NW-LOG on-event=NW_LOG_BKP policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-time=startup
+/system script
+add dont-require-permissions=no name=NW_LOG_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source=":local saveSysLogs true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysLogs) do={/log print file=(\$sfname)\r\n  :log info message=\"ARQUIVO DE LOG CRIADO\"\r\n}\r\n:delay 5s;\r\n:local logFileName \"\"\r\n:foreach logName in=[/file find] do={\r\n  :set logFileName (\"/\".[/file get \$logName name])\r\n  :if ([:typeof [find \$logFileName \$sfname]] != \"null\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$logFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$logFileName upload=yes;\r\n    :log info message=\"Arquivo de LOG Enviado com Sucesso!\";\r\n  }\r\n}\r\n:delay 1s;\r\n:local delFileName \"\"\r\n:foreach delLogName in=[/file find] do={\r\n  :set delFileName (\"/\".[/file get \$delLogName name])\r\n  :if ([:typeof [find \$delFileName \$sfname]] != \"null\") do={\r\n    /file remove \$delLogName;\r\n    :log info message=\"Arquivo de LOG Removido!\";\r\n  }\r\n}"
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
