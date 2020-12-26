@@ -1,0 +1,103 @@
+#        routerboard: yes
+#              model: RouterBOARD 3011UiAS
+#      serial-number: 783E06BBC0DA
+#      firmware-type: ipq8060
+#   factory-firmware: 3.35
+#   current-firmware: 3.35
+#   upgrade-firmware: 6.42.9
+# 
+#             channel: bugfix
+#   installed-version: 6.42.9
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U device changed                           glauberalencar   write              
+# 
+# software id = Z9DV-DF36
+#
+# model = RouterBOARD 3011UiAS
+# serial number = 783E06BBC0DA
+/interface bridge
+add fast-forward=no name=Loopback
+/interface ethernet
+set [ find default-name=ether2 ] comment=PN-01-ELMANO-ALG-CP-SENTIDO_VITALIANO
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PN-02-ELMANO-ALG-CP-SENTIDO_PROVEDOR
+set [ find default-name=ether4 ] advertise=10M-half,10M-full,100M-half,100M-full comment="PN-03-ELMANO-ALG-CP-SENTIDO_TORRE GOIANIA"
+set [ find default-name=ether5 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PN-04-ELMANO-ALG-CP-SENTIDO_OUREM
+set [ find default-name=ether10 ] advertise=10M-half,10M-full,100M-half,100M-full name=ether10-Omni5G
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=10138_SPEEDNETPA-ELMANO
+/ip pool
+add name=dhcp_pool1 ranges=10.101.1.2-10.101.1.254
+/ip dhcp-server
+add address-pool=dhcp_pool1 authoritative=after-2sec-delay disabled=no interface=ether1 lease-time=1d name=dhcp1
+/queue simple
+add limit-at=20M/20M max-limit=20M/20M name="ELMANO RADIO" queue=hotspot-default/hotspot-default target=10.101.1.0/24
+/routing ospf instance
+set [ find default=yes ] redistribute-connected=as-type-1 router-id=10.22.22.23
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk write-access=yes
+add addresses=0.0.0.0/0 name=public write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=170.231.184.4 target=remote
+/ip address
+add address=10.22.0.125/30 interface=ether10-Omni5G network=10.22.0.124
+add address=10.22.4.70/30 interface=ether7 network=10.22.4.68
+add address=10.22.4.89/30 interface=ether4 network=10.22.4.88
+add address=10.22.4.93/30 interface=ether2 network=10.22.4.92
+add address=10.22.4.97/30 interface=ether5 network=10.22.4.96
+add address=10.22.4.129/30 interface=ether3 network=10.22.4.128
+add address=10.22.22.23 interface=Loopback network=10.22.22.23
+add address=10.101.1.1/24 interface=ether1 network=10.101.1.0
+add address=10.22.4.14/30 interface=sfp1 network=10.22.4.12
+add address=10.7.1.1/24 interface=ether9 network=10.7.1.0
+/ip dhcp-server network
+add address=10.101.1.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=10.101.1.1
+/ip dns
+set servers=10.22.1.38,8.8.8.8
+/ip route
+add distance=111 gateway=10.22.4.13 scope=20
+/ip service
+set telnet address=0.0.0.0/0
+set ftp address=0.0.0.0/0
+set www address=0.0.0.0/0 port=8088
+set ssh address=0.0.0.0/0
+set www-ssl address=0.0.0.0/0 disabled=no
+set api address=0.0.0.0/0
+set winbox address=0.0.0.0/0
+set api-ssl address=0.0.0.0/0
+/routing ospf interface
+add interface=sfp1 network-type=point-to-point
+/routing ospf network
+add area=backbone network=10.22.0.124/30
+add area=backbone network=10.22.4.68/30
+add area=backbone network=10.22.4.88/30
+add area=backbone network=10.22.4.92/30
+add area=backbone network=10.22.4.96/30
+add area=backbone network=10.22.4.128/30
+add area=backbone network=10.22.22.23/32
+add area=backbone network=10.101.1.0/24
+add area=backbone network=10.22.4.12/30
+add area=backbone network=10.7.1.0/24
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138_SPEEDNETPA-ELMANO trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10138_SPEEDNETPA-ELMANO
+/system logging
+add topics=account
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=bugfix
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"170.231.184.4\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
