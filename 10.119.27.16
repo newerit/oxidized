@@ -1,0 +1,73 @@
+#        routerboard: yes
+#              model: RBDiscG-5acD
+#      serial-number: 80A40843B4FA
+#      firmware-type: ipq4000L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 3.43
+# 
+#             channel: current
+#   installed-version: 6.40.5
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = RD31-8G9U
+#
+# model = RBDiscG-5acD
+# serial number = 80A40843B4FA
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n/ac channel-width=20/40/80mhz-Ceee country=brazil disabled=no frequency=5880 frequency-mode=superchannel mode=bridge nv2-cell-radius=11 rx-chains=0,1 ssid="SAO LUIS MANDACARU" tx-chains=0,1 wps-mode=disabled
+/ip neighbor discovery
+set wlan1 discover=no
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/interface list member
+add comment=defconf interface=ether1 list=LAN
+add comment=defconf interface=wlan1 list=WAN
+/ip address
+add address=10.119.27.16/24 interface=ether1 network=10.119.27.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router.lan
+/ip route
+add distance=1 gateway=10.119.27.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="SAO LUIS MANDACARU" trap-version=2
+/system identity
+set name="SAO LUIS MANDACARU"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set [ find default=yes ] disabled=yes
+add interface=ether1
+/tool mac-server mac-winbox
+set [ find default=yes ] disabled=yes
+add interface=ether1
