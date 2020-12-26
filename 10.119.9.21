@@ -1,0 +1,110 @@
+#        routerboard: yes
+#              model: Groove A-52HPn
+#      serial-number: 4A5104893F95
+#      firmware-type: ar9340
+#   factory-firmware: 3.17
+#   current-firmware: 3.17
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = UUJ0-YMBT
+#
+# model = Groove A-52HPn
+# serial number = 4A5104893F95
+/interface bridge
+add fast-forward=no mtu=1500 name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=2ghz-onlyg basic-rates-a/g=9Mbps,12Mbps,18Mbps,36Mbps,48Mbps,54Mbps basic-rates-b=2Mbps,5.5Mbps,11Mbps country=brazil disabled=no frequency=2412 mode=ap-bridge nv2-cell-radius=28 radio-name=10118-NETSF-BAXIO-OMNI-2.4 ssid=NSF-BAXIO-2.4 supported-rates-b=2Mbps,5.5Mbps,11Mbps wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full name=ether1-local
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=aes-128-cbc
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge nat
+add action=accept chain=srcnat
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1-local
+add bridge=bridge1 interface=wlan1
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether1-local list=discover
+add interface=bridge1 list=discover
+add interface=ether1-local list=mactel
+add interface=ether1-local list=mac-winbox
+add interface=wlan1 list=LAN
+/interface wireless access-list
+add comment="LUCIANE MARIA DO NASCIMENTO" interface=wlan1 mac-address=3C:E5:B4:07:C3:E3
+add comment="FRANCISCO ERINALDO DA SILVA MESTICO" interface=wlan1 mac-address=3C:E5:B4:07:E4:DB
+add comment="PAULO ROBERTO SAC MARTINS" interface=wlan1 mac-address=3C:E5:B4:07:B6:5E
+add comment="JOAO PIMENTEL BREJO VELHO" interface=wlan1 mac-address=78:44:76:3C:F8:16
+add comment="MARIA JOSE BARRA VELHA" interface=wlan1 mac-address=3C:E5:B4:07:D7:5D
+add comment="NETAO MESTICO BAXIO" interface=wlan1 mac-address=78:44:76:3D:FE:5E vlan-mode=no-tag
+add comment="ANA LIMA PIMENTEL BAXIO" interface=wlan1 mac-address=00:15:6D:30:31:F7 vlan-mode=no-tag
+add comment="NILTOM SOUSA BAXIO" interface=wlan1 mac-address=3C:E5:B4:07:EC:55 vlan-mode=no-tag
+add comment="ERINETE SOARES DE CARVALHO" interface=wlan1 mac-address=00:15:6D:16:DB:42 vlan-mode=no-tag
+add comment="ANA LIMA PIMENTEL" interface=wlan1 mac-address=00:15:6D:30:31:F7 vlan-mode=no-tag
+/ip address
+add address=10.119.9.21/24 interface=bridge1 network=10.119.9.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=10.0.215.60 name=router
+/ip ipsec policy
+set 0 dst-address=0.0.0.0/0 src-address=0.0.0.0/0
+/ip proxy
+set cache-path=web-proxy1
+/ip route
+add distance=1 gateway=10.119.9.1
+add disabled=yes distance=1 gateway=10.0.215.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10118-NETSF-BAXIO-OMNI-2.4 trap-version=2
+/system clock
+set time-zone-autodetect=no time-zone-name=America/Sao_Paulo
+/system identity
+set name=10118-NETSF-BAXIO-OMNI-2.4
+/system leds
+set 0 interface=wlan1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=NW_LOG_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source=":local saveSysLogs true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysLogs) do={/log print file=(\$sfname)\r\n  :log info message=\"ARQUIVO DE LOG CRIADO\"\r\n}\r\n:delay 5s;\r\n:local logFileName \"\"\r\n:foreach logName in=[/file find] do={\r\n  :set logFileName (\"/\".[/file get \$logName name])\r\n  :if ([:typeof [find \$logFileName \$sfname]] != \"null\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$logFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$logFileName upload=yes;\r\n    :log info message=\"Arquivo de LOG Enviado com Sucesso!\";\r\n  }\r\n}\r\n:delay 1s;\r\n:local delFileName \"\"\r\n:foreach delLogName in=[/file find] do={\r\n  :set delFileName (\"/\".[/file get \$delLogName name])\r\n  :if ([:typeof [find \$delFileName \$sfname]] != \"null\") do={\r\n    /file remove \$delLogName;\r\n    :log info message=\"Arquivo de LOG Removido!\";\r\n  }\r\n}"
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool graphing interface
+add
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
+/tool netwatch
+add comment="MKFULL - nao alterar - script responsavel por ativar as secrets caso o mikrotik perca conexao com o mkfull" down-script="/ppp secret enable\_[find where comment~\"^mkfull\"]\n/ip hotspot user enable [find where comment~\"^mkfull\"]" host=18.228.78.71 timeout=5s up-script="/ppp secret disable [find where comment~\"^mkfull\"]\n/ppp active remove [find radius=no]\n/ip hotspot user disable [find where comment~\"^mkfull\"]\n/ip hotspot active remove [find where comment~\"^mkfull\"]"
