@@ -1,0 +1,69 @@
+#        routerboard: yes
+#         board-name: LHG HP5
+#              model: RBLHG-5HPnD
+#      serial-number: C6E70B74855F
+#      firmware-type: ar9344L
+#   factory-firmware: 6.44
+#   current-firmware: 6.45.8
+#   upgrade-firmware: 6.45.8
+# 
+#             channel: stable
+#   installed-version: 6.45.8
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = USIF-2XHS
+#
+# model = RBLHG-5HPnD
+# serial number = C6E70B74855F
+/interface bridge
+add fast-forward=no name=bridge1 protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-onlyn basic-rates-a/g="" channel-width=20/40mhz-eC country=australia disabled=no frequency=5300 frequency-mode=superchannel ht-basic-mcs=mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14 ht-supported-mcs=mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14 mode=bridge rate-set=configured ssid="ptp matheus" supported-rates-a/g="" wireless-protocol=nv2
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full mac-address=64:D1:54:4E:9A:21
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-file-name=log disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=ether1
+add bridge=bridge1 interface=wlan1
+/interface wireless access-list
+add forwarding=no interface=wlan1 mac-address=C4:AD:34:FE:7B:DA vlan-mode=no-tag
+/ip address
+add address=10.192.3.4/29 comment="default configuration" interface=ether1 network=10.192.3.0
+/ip dns
+set servers=8.8.8.8
+/ip route
+add distance=1 gateway=10.192.3.1
+/ip smb shares
+set [ find default=yes ] directory=/pub
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10112_WIFI-CONNECT-AP-BREJO trap-version=2
+/system clock
+set time-zone-name=America/Cuiaba
+/system identity
+set name=10112_WIFI-CONNECT-AP-BREJO
+/system leds
+set 0 leds=led1,led2,led3,led4,led5 type=wireless-signal-strength
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
