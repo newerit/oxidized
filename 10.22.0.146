@@ -1,0 +1,78 @@
+#        routerboard: yes
+#         board-name: NetMetal 5
+#              model: 922UAGS-5HPacD
+#      serial-number: 77C2060F2FDC
+#      firmware-type: qca9550
+#   factory-firmware: 3.34
+#   current-firmware: 6.44.3
+#   upgrade-firmware: 6.44.3
+# 
+#             channel: stable
+#   installed-version: 6.44.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 8UFP-T9J7
+#
+# model = 922UAGS-5HPacD
+# serial number = 77C2060F2FDC
+/interface bridge
+add name=bridge
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no distance=40 frequency=5680 ht-basic-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" installation=outdoor max-station-count=200 mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#FBI88180789KGB## nv2-security=enabled preamble-mode=short radio-name="" rate-set=configured rx-chains=0,1 ssid=SPEEDNET_PA-PN-4 supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface eoip
+add mac-address=02:CC:79:74:CF:59 name=EoIP-8502-Painel remote-address=10.22.22.66 tunnel-id=8502
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk write-access=yes
+add addresses=0.0.0.0/0 name=public write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=192.168.37.2 target=remote
+/user group
+set read policy="local,ssh,read,test,winbox,romon,tikapp,!telnet,!ftp,!reboot,!write,!policy,!password,!web,!sniff,!sensitive,!api,!dude"
+/interface bridge port
+add bridge=bridge interface=wlan1
+add bridge=bridge interface=EoIP-8502-Painel
+/ip address
+add address=10.22.0.146/30 interface=ether1 network=10.22.0.144
+/ip route
+add distance=1 gateway=10.22.0.145
+/ip service
+set api disabled=yes
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/mpls interface
+set [ find default=yes ] mpls-mtu=1520
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138_SPEEDNETPA-PTP_ND_HFCH trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name="SPEEDNET PN 4 GOIANIA COUTILANDIA"
+/system logging
+add topics=debug,wireless
+add action=newerit topics=info
+add action=newerit topics=error
+add topics=account
+add action=newerit topics=info
+add action=newerit topics=error
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKP on-event=NEWERIT_BKP policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_RSC on-event=NEWERIT_RSC policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_CLIENTE on-event=NEWERIT_CLIENTE policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=nov/28/2018 start-time=07:00:00
+/system script
+add dont-require-permissions=no name=NEWERIT_RSC owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source="/export file=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_RSC \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\"); :delay 20;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\")]; delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_CLIENTE owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+/tool e-mail
+set address=64.233.190.108 from=suportenewerit@gmail.com password=kokar643 port=587 start-tls=yes user=suportenewerit@gmail.com
