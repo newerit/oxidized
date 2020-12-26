@@ -1,0 +1,320 @@
+#        routerboard: yes
+#              model: RouterBOARD 3011UiAS
+#      serial-number: 780E062BF07D
+#      firmware-type: ipq8060
+#   factory-firmware: 3.27
+#   current-firmware: 3.27
+#   upgrade-firmware: 6.42.6
+# 
+#             channel: current
+#   installed-version: 6.42.6
+#              status: finding out latest version...
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U ppp secret <cleidimar-r4_n204-tplink>... regis            write              
+# U ppp secret <anderson-n23_avspatricio-... regis            write              
+# U ppp secret <anderson-n23_avspatricio-... regis            write              
+# 
+# software id = YZGC-IMXH
+#
+# model = RouterBOARD 3011UiAS
+# serial number = 780E062BF07D
+/interface bridge
+add admin-mac=6C:3B:6B:FB:EA:1F auto-mac=no fast-forward=no name=BR0_LOCAL
+/interface ethernet
+set [ find default-name=sfp1 ] comment=FIBRA_REDE_METRO_R4 name=SFP_1
+set [ find default-name=ether1 ] comment=VIVO-1
+set [ find default-name=ether2 ] comment=VIVO-2
+set [ find default-name=ether3 ] comment=ether3
+set [ find default-name=ether4 ] comment=ether4
+set [ find default-name=ether5 ] comment=ether5
+set [ find default-name=ether6 ] comment=ether6-master
+set [ find default-name=ether7 ] comment=ether7
+set [ find default-name=ether8 ] comment=ether8
+set [ find default-name=ether9 ] comment=ether9
+set [ find default-name=ether10 ] comment=E10_MKAUTH
+/interface pppoe-client
+add comment="IP:191.13.156.97(FIXO)" disabled=no interface=ether2 keepalive-timeout=60 name=VIVO2 password=cliente user=cliente@cliente
+/interface pppoe-server
+add disabled=yes name=pppoe-in1 service=GERAL_PPPoE user=josemberg-av_n19C-tplink
+add name=pppoe-in2 service=GERAL_PPPoE user=camila-r4_n210C3-tplink
+add name=pppoe-in3 service=GERAL_PPPoE user=alan-r5_119A-tplink
+/interface pptp-client
+add connect-to=71a00663dba8.sn.mynetname.net name=MONITOR_MRNET1 password=mrnet!@123 user=MRNET02
+add connect-to=279801a87f1f.sn.mynetname.net disabled=no mrru=1600 name=SUPORTE_NEWERIT password=cliente@123 user=mrnet2@cliente
+/interface eoip
+add disabled=yes !keepalive local-address=10.30.1.54 mac-address=02:BD:89:0A:7D:CD name=MON_NEWERIT remote-address=10.30.1.53 tunnel-id=125
+/interface vlan
+add comment=VLAN-VIVO interface=ether1 name=vlan10 vlan-id=10
+/interface pppoe-client
+add disabled=no interface=vlan10 keepalive-timeout=60 name=VIVO1 password=cliente use-peer-dns=yes user=cliente@cliente
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+add name=WAN
+add name=links
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=10125_MRNET_NAS_02
+/ip dhcp-server
+add authoritative=after-2sec-delay interface=BR0_LOCAL name=dhcp1
+/ip pool
+add name=Remoto-1 ranges=172.30.252.2-172.30.255.254
+add name=Bloqueio ranges=10.3.0.2-10.3.3.254
+add name=Local-1 ranges=172.30.0.1
+/ppp profile
+add change-tcp-mss=yes local-address=172.30.0.1 name=PPPoE-GERAL remote-address=Remoto-1 use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Server2_dedicado rate-limit="00k/00k 0/0 0/0 0/0 8 0/0" remote-address=Remoto-1 use-encryption=yes
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Bloqueio rate-limit="1024k/1024k 1024k/1024k 900k/900k 20/20 8 1024k/1024k" remote-address=Remoto-1 use-encryption=yes
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Plano_100mb rate-limit="51200k/102400k 51300k/104800k 51200k/102400k 20/20 8 51200k/102400k" remote-address=Remoto-1 use-encryption=yes
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Plano_50mb rate-limit="27000k/53000k 0/0 0/0 0/0 8 0/0" remote-address=Remoto-1 use-encryption=yes
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Plano_30mb rate-limit="18000k/30000k 0/0 0/0 0/0 8 0/0" remote-address=Remoto-1 use-encryption=yes
+add comment=mkauth dns-server=8.8.8.8,8.8.4.4 local-address=Local-1 name=Plano_40MB rate-limit="20000k/40000k 20000k/40000k 20000k/40000k 20/20 8 20000k/40000k" remote-address=Remoto-1 use-encryption=yes
+add name=50MB rate-limit=50M/50M
+add name=BLOQUEIO_50M rate-limit=1K/1K
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+add name=usuario policy="local,telnet,reboot,read,test,winbox,password,web,sniff,sensitive,tikapp,!ssh,!ftp,!write,!policy,!api,!romon,!dude"
+/interface bridge port
+add bridge=BR0_LOCAL interface=ether6
+add bridge=BR0_LOCAL interface=ether3
+add bridge=BR0_LOCAL interface=ether4
+add bridge=BR0_LOCAL interface=ether5
+add bridge=BR0_LOCAL interface=ether7
+add bridge=BR0_LOCAL interface=ether8
+add bridge=BR0_LOCAL interface=ether10
+/ip neighbor discovery-settings
+set discover-interface-list=WAN
+/ip settings
+set tcp-syncookies=yes
+/interface l2tp-server server
+set enabled=yes
+/interface list member
+add interface=ether2 list=discover
+add interface=ether3 list=discover
+add interface=ether4 list=discover
+add interface=ether5 list=discover
+add interface=SFP_1 list=discover
+add interface=ether6 list=discover
+add interface=ether7 list=discover
+add interface=ether8 list=discover
+add interface=ether9 list=discover
+add interface=ether10 list=discover
+add interface=BR0_LOCAL list=discover
+add interface=vlan10 list=discover
+add interface=VIVO1 list=discover
+add list=discover
+add interface=BR0_LOCAL list=mactel
+add interface=BR0_LOCAL list=mac-winbox
+add interface=ether1 list=WAN
+add interface=vlan10 list=WAN
+add interface=VIVO1 list=WAN
+add interface=MON_NEWERIT list=WAN
+add interface=SUPORTE_NEWERIT list=WAN
+add interface=VIVO1 list=links
+add interface=VIVO2 list=links
+/interface pppoe-server server
+add authentication=pap default-profile=PPPoE-GERAL disabled=no interface=BR0_LOCAL keepalive-timeout=120 max-mru=1480 max-mtu=1480 one-session-per-host=yes service-name=GERAL_PPPoE
+add authentication=pap default-profile=PPPoE-GERAL disabled=no interface=SFP_1 keepalive-timeout=120 max-mru=1480 max-mtu=1480 one-session-per-host=yes service-name=service1
+/interface pptp-server server
+set authentication=pap,chap,mschap1,mschap2 default-profile=default enabled=yes
+/ip address
+add address=172.18.255.2/24 interface=ether1 network=172.18.255.0
+add address=192.168.18.1/24 interface=BR0_LOCAL network=192.168.18.0
+add address=172.31.255.1/30 interface=ether10 network=172.31.255.0
+/ip cloud
+set ddns-enabled=yes
+/ip dhcp-client
+add add-default-route=no dhcp-options=hostname,clientid interface=BR0_LOCAL use-peer-dns=no use-peer-ntp=no
+/ip dhcp-server network
+add address=192.168.18.0/24 gateway=192.168.18.1
+/ip dns
+set servers=8.8.8.8,1.1.1.1
+/ip dns static
+add address=192.168.88.1 name=router
+/ip firewall address-list
+add address=192.168.32.0/21 list=allow-firewall
+add address=177.66.65.102 list=allow-firewall
+add address=10.0.0.0/8 list=allow-firewall
+add address=192.168.0.0/16 list=allow-firewall
+add address=172.16.0.0/12 list=allow-firewall
+/ip firewall filter
+add action=drop chain=forward comment=CORTE dst-port=!53 protocol=udp src-address-list=pgcorte
+add action=drop chain=forward comment=CORTE dst-port=!80,85,443,445 protocol=tcp src-address-list=pgcorte
+add action=accept chain=input comment=NEWERIT-Firewall_Protecao_Router src-address-list=allow-firewall
+add action=accept chain=forward comment=NEWERIT-Firewall_Protecao_Router src-address-list=allow-firewall
+add action=drop chain=forward comment=NEWERIT-Drop_Acesso_Classe_Publica dst-address-list=allow-firewall dst-port=21,22,23,25,53,80,110,123,161,443,8291,19,69,1900,3389 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Drop_Acesso_Classe_Publica dst-address-list=allow-firewall dst-port=21,22,23,25,53,80,110,123,161,443,8291,19,69,1900,3389 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_Router dst-port=2222 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_PPTP dst-port=1723 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_PPTP dst-port=1723 protocol=tcp src-address-list=!allow-firewall
+add action=add-src-to-address-list address-list=allow-firewall address-list-timeout=1h chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=64352 protocol=tcp
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_MKD dst-port=5678,20561 protocol=udp
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=21 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=22 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=23 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=53 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=53 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=69 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=161 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=162 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=137-139 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=139 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=137-139 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=445 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8097-8098 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=81-82 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=47 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=47 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=81-82 protocol=udp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8880 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router*****WEB_MIKROTIK**** dst-address-list=allow-firewall dst-port=8078 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8728 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8729 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_Router dst-port=2000-2009 protocol=tcp src-address-list=!allow-firewall
+add action=drop chain=forward comment=NEWERIT-Firewall_Protecao_Router dst-port=2000-2009 protocol=udp src-address-list=!allow-firewall
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp psd=21,3s,5,3 src-address-list=!allow-firewall
+add action=add-src-to-address-list address-list=blocked-addr address-list-timeout=1d chain=input comment=BLOCK_SESSION_ATTACK dst-address-list=allow-firewall psd=21,3s,3,1 src-address-list=!allow-firewall
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=fin,!syn,!rst,!psh,!ack,!urg
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=fin,syn
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=syn,rst
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=fin,psh,urg,!syn,!rst,!ack
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=fin,syn,rst,psh,ack,urg
+add action=add-src-to-address-list address-list="port scanners" address-list-timeout=2w chain=input comment=NEWERIT-Firewall_Protecao_Router dst-address-list=allow-firewall protocol=tcp src-address-list=!allow-firewall tcp-flags=!fin,!syn,!rst,!psh,!ack,!urg
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router src-address-list="port scanners"
+add action=tarpit chain=input comment=NEWERIT-Firewall_Protecao_Router connection-limit=3,32 protocol=tcp src-address-list=blocked-addr
+add action=jump chain=forward comment=NEWERIT-Firewall_Protecao_Router connection-state=new jump-target=SYN-Protect protocol=tcp src-address-list=!allow-firewall tcp-flags=syn
+add action=accept chain=SYN-Protect comment=NEWERIT-Firewall_Protecao_Router connection-state=new limit=400,5:packet protocol=tcp tcp-flags=syn
+add action=drop chain=SYN-Protect comment=NEWERIT-Firewall_Protecao_Router connection-state=new protocol=tcp tcp-flags=syn
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=21 protocol=tcp src-address-list=blocked-addr
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=23 protocol=tcp src-address-list=blocked-addr
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8291 protocol=tcp src-address-list=blocked-addr
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8080 protocol=tcp src-address-list=blocked-addr
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=80 protocol=tcp src-address-list=blocked-addr
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=22 protocol=tcp src-address-list=blocked-addr
+add action=accept chain=output comment=NEWERIT-Firewall_Protecao_Router content="530 Login incorrect" dst-limit=1/1m,9,dst-address/1m protocol=tcp
+add action=accept chain=output comment=NEWERIT-Firewall_Protecao_Router content="bad username or password" dst-limit=1/1m,9,dst-address/1m protocol=tcp
+add action=add-dst-to-address-list address-list=blocked-addr address-list-timeout=3h chain=output comment=NEWERIT-Firewall_Protecao_Router content="530 Login incorrect"
+add action=add-dst-to-address-list address-list=blocked-addr address-list-timeout=3h chain=output comment=NEWERIT-Firewall_Protecao_Router content="bad username or password"
+add action=add-dst-to-address-list address-list=blocked-addr address-list-timeout=3h chain=output comment=NEWERIT-Firewall_Protecao_Router content=Failure
+add action=drop chain=input comment=NEWERIT-Firewall_Protecao_Router dst-port=8087 protocol=tcp src-address-list=!allow-firewall
+add action=fasttrack-connection chain=forward connection-state=established,related in-interface=!all-ppp
+add action=accept chain=forward connection-state=established,related in-interface=!all-ppp
+/ip firewall mangle
+add action=log chain=prerouting disabled=yes dst-port=53 in-interface=all-ppp log-prefix=DNS protocol=udp
+add action=accept chain=prerouting src-address=172.31.255.0/24
+add action=accept chain=prerouting dst-address=172.31.255.0/24
+add action=mark-routing chain=prerouting dst-address=!172.30.254.0/23 dst-address-type=!local in-interface=all-ppp new-routing-mark=VIVO-1 passthrough=yes per-connection-classifier=both-addresses:2/0 src-address=172.30.254.0/23
+add action=mark-routing chain=prerouting dst-address=!172.30.254.0/23 dst-address-type=!local in-interface=all-ppp new-routing-mark=VIVO-2 passthrough=yes per-connection-classifier=both-addresses:2/1 src-address=172.30.254.0/23
+/ip firewall nat
+add action=dst-nat chain=dstnat comment=CORTE_HTTPS dst-address=!172.31.255.2 dst-port=443 protocol=tcp src-address-list=Bloqueio to-addresses=172.31.255.2 to-ports=445
+add action=dst-nat chain=dstnat comment=CORTE_HTTP dst-address=!172.31.255.2 dst-port=80 protocol=tcp src-address-list=Bloqueio to-addresses=172.31.255.2 to-ports=85
+add action=dst-nat chain=dstnat comment=MKAUTH_WEB dst-port=8089 protocol=tcp to-addresses=172.31.255.2 to-ports=80
+add action=masquerade chain=srcnat comment=NAT_GERAL out-interface-list=links
+add action=netmap chain=dstnat comment=MAP_DNS disabled=yes dst-port=53 in-interface=all-ppp protocol=udp to-addresses=8.8.8.8 to-ports=53
+/ip route
+add check-gateway=ping distance=1 gateway=VIVO1 routing-mark=VIVO-1
+add check-gateway=ping distance=1 gateway=VIVO2 routing-mark=VIVO-2
+add check-gateway=ping distance=1 gateway=VIVO1
+add check-gateway=ping distance=2 gateway=VIVO2
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes port=8088
+/ip socks
+set enabled=yes port=4153
+/ip socks access
+add action=deny src-address=!95.154.216.128/25
+/ppp aaa
+set interim-update=5m use-radius=yes
+/ppp secret
+add comment=mkauth disabled=yes name=danilo-r4_n174-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=guilherme-r3_n89-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth name=mikrotik-quarto@pwl.ca password=23092309 profile=Server2_dedicado service=pppoe
+add comment=mkauth disabled=yes name=everson-r3_n95-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=dona_cida-r3_n187C2-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=teste@teste password=teste profile=Server2_dedicado service=pppoe
+add comment=mkauth disabled=yes name=viviane-r3_25-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth name=cleidimar-r4_n204-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=cintia-r4_n120-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=beto-r3_n56C1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=alexandre-r3_n22-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=marcao/lucia-r3_n109-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=elisangela-r4_n89-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=rose-r4_n200C1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=cristiane-r4_n90-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=donja-r4_n169-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=gideone-r4_109A1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=juarez-r4_n103-dlink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=geta-r3_n46-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=cido-r4_n223C2-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=rosa-r4_n185-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=silvia-r4_n194-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=domingos-r3_n82-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=roger-r4_n223C1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=pwl@pwl password=pwl profile=Server2_dedicado service=pppoe
+add comment=mkauth disabled=yes name=marcosanches-r3_n11-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=cida-r4_n100-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=michelle-r4_n205-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=manoel-avsp_n25-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=sandra-r3_n112-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=cleide-av_n19C1-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=robertinho-r3_n12-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=priscila-r4_n60C2-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=regis-r4_n50-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=itamar-r4_n49-Dlink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=alan-r5_119A-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=adriano-r4_n163-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=otoniel-r4_n53-dlink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=andreia-r3_n16-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=lucilene-r3_n167-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=marcilene-r4_n63-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=rosa-r4_n150C1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=adriano-r3_n140-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=genivaldo-r4_n109B2-tplink password=23092309 profile=Plano_50mb service=pppoe
+add comment=mkauth disabled=yes name=washington-r3_n56C2-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=tatiane-r4_n180-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=wilson-r3_n190C1-tplink password=23092309 profile=Plano_50mb service=pppoe
+add name=mrnet@ password=mrnet@ profile=PPPoE-GERAL
+add name=pc-andre_c&c_generals password=23092309 profile=PPPoE-GERAL service=pppoe
+add name=router2-c&c_generals password=23092309 profile=PPPoE-GERAL service=pppoe
+add comment=mkauth disabled=yes name=eloisa-r4_n34-tplink password=23092309 profile=Plano_40MB service=pppoe
+add comment=mkauth disabled=yes name=anderson-n23_avspatricio-tplink password=23092309 profile=Plano_40MB service=pppoe
+add comment=mkauth disabled=yes name=jaqueline-r3_n137-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=israel-salao-r4_n100-tplink password=23092309 service=pppoe
+add comment=mkauth disabled=yes name=cristiane-r4_n99C1-tplink password=23092309 service=pppoe
+add disabled=yes name=camila-r3_n56C3-tplink password=23092309 service=pppoe
+/radius
+add address=172.31.255.2 secret=mrnet!@123 service=ppp src-address=172.31.255.1
+/radius incoming
+set accept=yes
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10125_MRNET_NAS_02 trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10125_MRNET_NAS_02
+/system logging
+add action=newerit disabled=yes topics=account,info
+add disabled=yes topics=pppoe
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:07:20
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
