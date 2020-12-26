@@ -1,0 +1,80 @@
+#        routerboard: yes
+#         board-name: SXT Lite5
+#              model: SXT 5nD r2
+#      serial-number: 5E9A0847A338
+#      firmware-type: ar9344
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = M4M2-7SA5
+#
+# model = SXT 5nD r2
+# serial number = 5E9A0847A338
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n channel-width=20/40mhz-Ce country=brazil disabled=no frequency=auto frequency-mode=superchannel mode=station-bridge radio-name=CAMPxMEST scan-list=5425 ssid="MESTICO CAMP" wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether1 list=discover
+add interface=bridge1 list=discover
+add interface=ether1 list=mactel
+add interface=ether1 list=mac-winbox
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.9.15/24 comment=defconf interface=bridge1 network=10.119.9.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router
+/ip firewall nat
+# in/out-interface matcher not possible when interface (wlan1) is slave - use master instead (bridge1)
+add action=masquerade chain=srcnat comment="defconf: masquerade" out-interface=wlan1
+/ip route
+add distance=1 gateway=10.119.9.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10118_NETSF-PTP-MESxCPZ-STA trap-version=2
+/system identity
+set name=10118_NETSF-PTP-MESxCPZ-STA
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
