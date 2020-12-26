@@ -1,0 +1,56 @@
+#        routerboard: yes
+#         board-name: NetMetal 5
+#              model: 921UAGS-5SHPacD
+#      serial-number: 620504B89B62
+#      firmware-type: qca9550
+#   factory-firmware: 3.22
+#   current-firmware: 3.22
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 3SRI-J87G
+#
+# model = 921UAGS-5SHPacD
+# serial number = 620504B89B62
+/interface bridge
+add fast-forward=no name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n/ac basic-rates-a/g="" channel-width=20/40/80mhz-Ceee country=brazil disabled=no frequency=5670 frequency-mode=superchannel mode=bridge nv2-cell-radius=18 radio-name="ITA CURRAL RB" rate-set=configured rx-chains=0,1 scan-list=5670 ssid="ITA CURRAL RB" supported-rates-a/g="" tx-chains=0,1 vht-supported-mcs=mcs0-7,mcs0-8,mcs0-9 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/interface detect-internet
+set detect-interface-list=all
+/ip address
+add address=10.119.14.6/24 interface=ether1 network=10.119.14.0
+/ip route
+add distance=1 gateway=10.119.14.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="ITA CURRAL" trap-version=2
+/system identity
+set name="ITA CURRAL"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
