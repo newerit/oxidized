@@ -1,0 +1,54 @@
+#        routerboard: yes
+#         board-name: DISC Lite5 ac
+#              model: RBDiscG-5acD
+#      serial-number: 80A4082A4148
+#      firmware-type: ipq4000L
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.3
+# 
+#             channel: stable
+#   installed-version: 6.45.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = PIYI-D8T3
+#
+# model = RBDiscG-5acD
+# serial number = 80A4082A4148
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n/ac channel-width=20/40/80mhz-Ceee country=brazil disabled=no frequency=5550 frequency-mode=superchannel mode=station-bridge scan-list=5550 ssid="JUVENIR TABULEIRO"
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/ip address
+add address=10.119.19.100/24 interface=ether1 network=10.119.19.0
+/ip route
+add distance=1 gateway=10.119.19.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="TABULEIRO JUVENIR" trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name="TABULEIRO JUVENIR"
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
