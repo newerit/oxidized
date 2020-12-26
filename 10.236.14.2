@@ -1,0 +1,224 @@
+#        routerboard: yes
+#              model: CRS317-1G-16S+
+#      serial-number: 846C0907646D
+#      firmware-type: dx3230L
+#   factory-firmware: 6.41
+#   current-firmware: 6.45.6
+#   upgrade-firmware: 6.44.6
+# 
+#             channel: long-term
+#   installed-version: 6.44.6
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U address removed                          noc              write              
+# U device changed                           noc              write              
+# U device changed                           noc              write              
+# U device changed                           noc              write              
+# U device changed                           noc              write              
+# U device changed                           noc              write              
+# U device changed                           noc              write              
+# U item changed                             cassio           write              
+# U dns changed                              cassio           write              
+# U new script added                         cassio           write              
+# U new script scheduled                     cassio           write              
+# U changed email settings                   cassio           write              
+# U item added                               noc              write              
+# U bridge port changed                      noc              write              
+# U item changed                             noc              write              
+# U item changed                             noc              write              
+# U device changed                           noc              write              
+# U bridge port changed                      noc              write              
+# U item changed                             noc              write              
+# U nat rule changed                         noc              write              
+# U nat rule added                           noc              write              
+# U address changed                          noc              write              
+# U address changed                          noc              write              
+# U address changed                          noc              write              
+# U device changed                           noc              write              
+# U address changed                          noc              write              
+# U address changed                          noc              write              
+# U device changed                           noc              write              
+# U nat rule changed                         cassio           write              
+# U nat rule changed                         cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U bridge port changed                      cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U item changed                             cassio           write              
+# U item changed                             cassio           write              
+# U bridge port added                        cassio           write              
+# U nat rule added                           cassio           write              
+# U nat rule changed                         cassio           write              
+# U device changed                           cassio           write              
+# U nat rule changed                         noc              write              
+# U bridge port changed                      noc              write              
+# U bridge port changed                      noc              write              
+# U address changed                          noc              write              
+# U address changed                          noc              write              
+# U bridge port changed                      noc              write              
+# U bridge port removed                      noc              write              
+# U bridge port removed                      noc              write              
+# U bridge port changed                      noc              write              
+# U device changed                           noc              write              
+# U item changed                             cassio           write              
+# U bridge port changed                      newerit          write              
+# U bridge port changed                      newerit          write              
+# U device changed                           flavio           write              
+# U device changed                           cassio           write              
+# U device changed                           cassio           write              
+# U device changed                           edilton          write              
+# U bridge port changed                      cassio           write              
+# U item changed                             cassio           write              
+# U bridge port changed                      cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address added                            cassio           write              
+# U bridge port changed                      cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U address changed                          cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U address changed                          cassio           write              
+# U bridge port changed                      cassio           write              
+# U item changed                             cassio           write              
+# U item changed                             cassio           write              
+# U bridge port changed                      cassio           write              
+# U nat rule added                           cassio           write              
+# U bridge port changed                      cassio           write              
+# U device removed                           cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port removed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# U bridge port changed                      cassio           write              
+# 
+# software id = QLAF-F2YW
+#
+# model = CRS317-1G-16S+
+# serial number = 846C0907646D
+/interface bridge
+add admin-mac=B8:69:F4:00:00:00 auto-mac=no ingress-filtering=yes name=Trunk vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether1 ] name="ether1-DIGITAL 300MB GUZELA"
+set [ find default-name=sfp-sfpplus1 ] name=sfp-sfpplus1-Speed-CPD
+set [ find default-name=sfp-sfpplus3 ] auto-negotiation=no mtu=1560 name=sfp-sfpplus3-RB-VALE-FAZ
+set [ find default-name=sfp-sfpplus4 ] name="sfp-sfpplus4-BONANZA-DIGITAL 6.5"
+set [ find default-name=sfp-sfpplus5 ] name="sfp-sfpplus5-ROCKET BONANZA"
+set [ find default-name=sfp-sfpplus13 ] name=sfp-sfpplus13-Usina speed=100Mbps
+set [ find default-name=sfp-sfpplus16 ] advertise=100M-full,1000M-full name=sfp-sfpplus16-RB-VALE speed=100Mbps
+/interface vlan
+add interface=sfp-sfpplus1-Speed-CPD name=vlan1515-GERENCIA vlan-id=1515
+add comment=MONITOR-REDE_BONAZA interface=sfp-sfpplus3-RB-VALE-FAZ name=vlan1523 vlan-id=1523
+/interface ethernet switch port
+set 0 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 1 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 2 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 3 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 4 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 16 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+set 17 limit-unknown-multicasts=yes limit-unknown-unicasts=yes storm-rate=1
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/routing ospf instance
+set [ find default=yes ] disabled=yes router-id=10.255.255.27
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=Trunk interface=sfp-sfpplus1-Speed-CPD
+add bridge=Trunk interface=sfp-sfpplus3-RB-VALE-FAZ
+add bridge=Trunk comment=VLAN_GERENCIA_1519 disabled=yes interface="sfp-sfpplus5-ROCKET BONANZA" pvid=1519
+add bridge=Trunk interface="sfp-sfpplus4-BONANZA-DIGITAL 6.5" pvid=1523
+add bridge=Trunk interface=vlan1515-GERENCIA
+add bridge=Trunk interface="ether1-DIGITAL 300MB GUZELA"
+add bridge=Trunk interface=sfp-sfpplus13-Usina
+add bridge=Trunk interface=vlan1523
+add bridge=Trunk disabled=yes interface="sfp-sfpplus5-ROCKET BONANZA"
+/ip firewall connection tracking
+set enabled=yes loose-tcp-tracking=no
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=Trunk tagged="sfp-sfpplus1-Speed-CPD,sfp-sfpplus4-BONANZA-DIGITAL 6.5" vlan-ids=404
+add bridge=Trunk tagged=sfp-sfpplus1-Speed-CPD untagged="sfp-sfpplus2,sfp-sfpplus5-ROCKET BONANZA,ether1-DIGITAL 300MB GUZELA,sfp-sfpplus6,sfp-sfpplus4-BONANZA-DIGITAL 6.5" vlan-ids=1515
+add bridge=Trunk tagged="sfp-sfpplus3-RB-VALE-FAZ,sfp-sfpplus4-BONANZA-DIGITAL 6.5" vlan-ids=314
+add bridge=Trunk tagged="ether1-DIGITAL 300MB GUZELA,sfp-sfpplus3-RB-VALE-FAZ" vlan-ids=311,315
+add bridge=Trunk tagged="ether1-DIGITAL 300MB GUZELA,sfp-sfpplus1-Speed-CPD" vlan-ids=312
+add bridge=Trunk tagged="ether1-DIGITAL 300MB GUZELA,sfp-sfpplus1-Speed-CPD" vlan-ids=313
+add bridge=Trunk tagged=sfp-sfpplus1-Speed-CPD untagged="sfp-sfpplus5-ROCKET BONANZA" vlan-ids=1519
+add bridge=Trunk tagged=sfp-sfpplus6,sfp-sfpplus1-Speed-CPD vlan-ids=301
+add bridge=Trunk tagged="ether1-DIGITAL 300MB GUZELA,sfp-sfpplus1-Speed-CPD" vlan-ids=309
+add bridge=Trunk tagged=sfp-sfpplus1-Speed-CPD,sfp-sfpplus13-Usina vlan-ids=704
+add bridge=Trunk tagged="sfp-sfpplus3-RB-VALE-FAZ,sfp-sfpplus4-BONANZA-DIGITAL 6.5" vlan-ids=1590
+add bridge=Trunk tagged=sfp-sfpplus3-RB-VALE-FAZ untagged="sfp-sfpplus4-BONANZA-DIGITAL 6.5" vlan-ids=1523
+add bridge=Trunk tagged="sfp-sfpplus4-BONANZA-DIGITAL 6.5,sfp-sfpplus3-RB-VALE-FAZ" vlan-ids=1580
+/interface ethernet switch rule
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports="sfp-sfpplus5-ROCKET BONANZA" switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports="ether1-DIGITAL 300MB GUZELA" switch=switch1
+add disabled=yes dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=sfp-sfpplus1-Speed-CPD switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=sfp-sfpplus2 switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports=sfp-sfpplus3-RB-VALE-FAZ switch=switch1
+add dst-mac-address=01:80:C2:00:00:00/FF:FF:FF:FF:FF:FF new-dst-ports="" ports="sfp-sfpplus4-BONANZA-DIGITAL 6.5" switch=switch1
+/ip address
+add address=10.236.14.2/30 comment=GERENCIA interface=sfp-sfpplus1-Speed-CPD network=10.236.14.0
+add address=10.236.101.1/24 interface="sfp-sfpplus4-BONANZA-DIGITAL 6.5" network=10.236.101.0
+/ip dns
+set servers=45.236.180.10,1.1.1.1
+/ip firewall nat
+add action=dst-nat chain=dstnat dst-address=10.236.14.2 dst-port=8862 protocol=tcp to-addresses=10.236.19.15 to-ports=8291
+add action=dst-nat chain=dstnat dst-address=10.236.14.2 dst-port=8863 protocol=tcp to-addresses=192.168.1.25 to-ports=443
+add action=dst-nat chain=dstnat dst-address=10.236.14.2 dst-port=8864 protocol=tcp to-addresses=10.236.101.14 to-ports=80
+add action=dst-nat chain=dstnat dst-address=10.236.14.2 dst-port=8865 protocol=tcp to-addresses=10.236.101.15 to-ports=80
+/ip route
+add distance=1 gateway=10.236.14.1
+add distance=2 gateway=192.168.45.9
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set api disabled=yes
+set api-ssl disabled=yes
+/routing ospf network
+add area=backbone network=172.40.1.152/30
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10126_SPEEDNETCR-SW-VL-ROTAS trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10126_SPEEDNETCR-SW-VL-ROTAS
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=long-term
+/system routerboard settings
+set boot-os=router-os
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=oct/25/2019 start-time=04:07:20
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=oct/25/2019 start-time=05:08:37
+add interval=30m name=NW-LOG on-event=NW_LOG_BKP policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-time=startup
+add interval=1d name=Backup_Email_SpeednetCR on-event=Backup_Email_SpeednetCR policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=oct/14/2019 start-time=13:21:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+add dont-require-permissions=no name=NW_LOG_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source=":local saveSysLogs true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysLogs) do={/log print file=(\$sfname)\r\n  :log info message=\"ARQUIVO DE LOG CRIADO\"\r\n}\r\n:delay 5s;\r\n:local logFileName \"\"\r\n:foreach logName in=[/file find] do={\r\n  :set logFileName (\"/\".[/file get \$logName name])\r\n  :if ([:typeof [find \$logFileName \$sfname]] != \"null\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$logFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$logFileName upload=yes;\r\n    :log info message=\"Arquivo de LOG Enviado com Sucesso!\";\r\n  }\r\n}\r\n:delay 1s;\r\n:local delFileName \"\"\r\n:foreach delLogName in=[/file find] do={\r\n  :set delFileName (\"/\".[/file get \$delLogName name])\r\n  :if ([:typeof [find \$delFileName \$sfname]] != \"null\") do={\r\n    /file remove \$delLogName;\r\n    :log info message=\"Arquivo de LOG Removido!\";\r\n  }\r\n}"
+add dont-require-permissions=no name=Backup_Email_SpeednetCR owner=cassio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/export file=backup_mikrotik compact\r\n:log info message=\"Iniciando Backup por E-mail\"\r\n:delay 5s\r\n:global data [/system clock get date]\r\n:global hora [/system clock get time]\r\n:global nome [/system identity get name]\r\n\r\n\r\n/tool e-mail send to=\"nocspeednetcr@gmail.com\" subject=\"Backup do MikroTik \$nome - \$data \E0s \$hora\" body=\"Backup automatico do servidor \$me realizado \E0s \$hora de \$data.\" file=backup_mikrotik start-tls=yes\r\n\r\n\r\n\r\n"
+/tool e-mail
+set address=smtp.gmail.com from=bkpspeednetcr@gmail.com password=speedcr1234 port=587 start-tls=yes user=bkpspeednetcr@gmail.com
