@@ -1,0 +1,64 @@
+#        routerboard: yes
+#         board-name: Groove 52
+#              model: Groove 52HPn r2
+#      serial-number: 6F0206C186E7
+#      firmware-type: ar9340L
+#   factory-firmware: 3.33
+#   current-firmware: 3.33
+#   upgrade-firmware: 6.47
+# 
+#             channel: stable
+#   installed-version: 6.47
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = JNC3-2Y9X
+#
+# model = Groove 52HPn r2
+# serial number = 6F0206C186E7
+/interface bridge
+add fast-forward=no name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n channel-width=20/40mhz-Ce country=australia disabled=no frequency=5540 frequency-mode=superchannel mode=ap-bridge ssid="WIFI CONNECT MAREJO"
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/interface wireless access-list
+add comment="ROBERTA JANDIRA" forwarding=no interface=wlan1 mac-address=00:1A:3F:86:D4:92 vlan-mode=no-tag
+add comment="RAPAZ DO ONIBUNS" forwarding=no interface=wlan1 mac-address=18:0D:2C:16:FC:77 vlan-mode=no-tag
+add vlan-mode=no-tag
+/ip address
+add address=10.192.1.194/26 interface=ether1 network=10.192.1.192
+/ip dns
+set servers=8.8.8.8
+/ip route
+add distance=1 gateway=10.192.1.193
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10112_WIFI-CONNECT-MAREJO trap-version=2
+/system clock
+set time-zone-name=America/Cuiaba
+/system identity
+set name=10112_WIFI-CONNECT-MAREJO
+/system leds
+set 0 interface=wlan1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
