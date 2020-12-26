@@ -1,0 +1,72 @@
+#        routerboard: yes
+#              model: 912UAG-5HPnD
+#      serial-number: 603705E72482
+#      firmware-type: ar9340
+#   factory-firmware: 3.22
+#   current-firmware: 3.33
+#   upgrade-firmware: 3.33
+# 
+#             channel: current
+#   installed-version: 6.36.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = SANE-42ET
+#
+/interface bridge
+add name=Bridge-Internet
+add name=Loopback
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5540 ht-basic-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#FBI2304846529KGB#5G nv2-security=enabled rate-set=configured rx-chains=0,1 ssid=SPEEDNET_B1_5G_GN supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface eoip
+add allow-fast-path=no !keepalive mac-address=02:1C:C4:8F:89:1D name=EoIP-4601-Garrafao remote-address=10.22.22.9 tunnel-id=4601
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/routing ospf instance
+set [ find default=yes ] router-id=10.22.22.46
+/snmp community
+set [ find default=yes ] name=neweritmk write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=Bridge-Internet interface=wlan1
+add bridge=Bridge-Internet interface=EoIP-4601-Garrafao
+/interface wireless access-list
+add comment="EDSON AMANCIO" interface=wlan1 mac-address=64:D1:54:41:D3:35 vlan-mode=no-tag
+/ip address
+add address=10.22.0.194/30 interface=ether1 network=10.22.0.192
+add address=10.22.22.46 interface=Loopback network=10.22.22.46
+/ip route
+add distance=1 gateway=10.22.0.193
+/ip service
+set telnet address=0.0.0.0/0
+set ftp address=0.0.0.0/0
+set www address=0.0.0.0/0 port=8088
+set ssh address=0.0.0.0/0
+set www-ssl address=0.0.0.0/0 disabled=no
+set api address=0.0.0.0/0
+set winbox address=0.0.0.0/0
+set api-ssl address=0.0.0.0/0
+/routing ospf network
+add area=backbone network=10.22.0.192/30
+add area=backbone network=10.22.22.46/32
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNETPA-SPEEDNET_B1_5G_GN trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10138_SPEEDNETPA-SPEEDNET_B1_5G_GN
+/system logging
+add topics=account
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set cpu-frequency=600MHz init-delay=0s
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
