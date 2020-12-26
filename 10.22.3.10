@@ -1,0 +1,97 @@
+#        routerboard: yes
+#              model: CCR1009-7G-1C-1S+
+#      serial-number: 849707C553EC
+#      firmware-type: tilegx
+#   factory-firmware: 3.39
+#   current-firmware: 6.44.3
+#   upgrade-firmware: 6.44.3
+# 
+#             channel: stable
+#   installed-version: 6.44.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = KI7T-YB4F
+#
+# model = CCR1009-7G-1C-1S+
+# serial number = 849707C553EC
+/interface bridge
+add name=T-VLANS protocol-mode=none vlan-filtering=yes
+/interface ethernet
+set [ find default-name=combo1 ] comment="SAIDA-PAINEIS(CRS212)"
+set [ find default-name=ether1 ] comment=LINK-DIGITAL-PIRIA
+set [ find default-name=ether2 ] comment=LIVRAMENTO
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full loop-protect=on rx-flow-control=auto tx-flow-control=auto
+set [ find default-name=ether4 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment="CARLOS FAZENDA/TATA/LINK-RENAN" loop-protect=on speed=100Mbps
+set [ find default-name=ether5 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment=LINK-BACKUP_PIRIA disabled=yes
+set [ find default-name=sfp-sfpplus1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full auto-negotiation=no comment=ENTRADA-SWITCH1-GN speed=1Gbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=170.231.184.4 target=remote
+/interface bridge port
+add bpdu-guard=yes bridge=T-VLANS interface=sfp-sfpplus1
+add bridge=T-VLANS interface=combo1
+add auto-isolate=yes bridge=T-VLANS interface=ether2 pvid=1600
+add auto-isolate=yes bridge=T-VLANS disabled=yes interface=ether3
+add bridge=T-VLANS interface=ether4
+add bridge=T-VLANS interface=ether5 pvid=1602
+add bridge=T-VLANS disabled=yes interface=ether6
+add bridge=T-VLANS disabled=yes interface=ether7
+add auto-isolate=yes bridge=T-VLANS interface=ether1
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface bridge vlan
+add bridge=T-VLANS comment=PIRIA tagged=sfp-sfpplus1,ether1 vlan-ids=1402
+add bridge=T-VLANS comment=RENATO tagged=sfp-sfpplus1,ether3 vlan-ids=1401
+add bridge=T-VLANS comment=LIVRAMENTO tagged=sfp-sfpplus1 untagged=ether2 vlan-ids=1600
+add bridge=T-VLANS comment=CARLOS_TATA tagged=sfp-sfpplus1,ether4 vlan-ids=1601
+add bridge=T-VLANS comment=GLAUBER_CASA tagged=sfp-sfpplus1,ether2 vlan-ids=1500
+add bridge=T-VLANS comment=SpeedNet_ALG-PN02_5G tagged=sfp-sfpplus1,combo1 vlan-ids=100
+add bridge=T-VLANS comment=SpeedNet_ALG-PN02_5G tagged=sfp-sfpplus1,combo1 vlan-ids=101
+add bridge=T-VLANS comment=ALG-PN-03-5G tagged=sfp-sfpplus1,combo1 vlan-ids=102
+add bridge=T-VLANS comment=SpeedNet_ALG_PN_04_5G tagged=sfp-sfpplus1,combo1 vlan-ids=103
+add bridge=T-VLANS comment=PAINEL_001-TCE tagged=sfp-sfpplus1,combo1 vlan-ids=104
+add bridge=T-VLANS comment=PAINEL_002-TCE tagged=sfp-sfpplus1,combo1 vlan-ids=105
+add bridge=T-VLANS comment=PAINEL_003-TCE tagged=sfp-sfpplus1,combo1 vlan-ids=106
+add bridge=T-VLANS comment=PAINEL_004-TCE tagged=sfp-sfpplus1,combo1 vlan-ids=107
+add bridge=T-VLANS comment=Ether1-2011-PMG tagged=sfp-sfpplus1,combo1 vlan-ids=108
+add bridge=T-VLANS comment=PMG-OMNI tagged=sfp-sfpplus1,combo1 vlan-ids=110
+add bridge=T-VLANS comment=PAINEL1-PMGN tagged=sfp-sfpplus1,combo1 vlan-ids=113
+add bridge=T-VLANS comment=PAINEL2-PMGN tagged=sfp-sfpplus1,combo1 vlan-ids=114
+add bridge=T-VLANS comment=PAINEL3-PMGN tagged=sfp-sfpplus1,combo1 vlan-ids=115
+add bridge=T-VLANS comment=LIVRAMENTO tagged=ether2,sfp-sfpplus1 vlan-ids=181,116,4020
+add bridge=T-VLANS comment=CARLOS_TATA disabled=yes tagged=sfp-sfpplus1 untagged=ether5 vlan-ids=1602
+add bridge=T-VLANS comment=LINK-RENAM-CARLOS tagged=sfp-sfpplus1,ether4 vlan-ids=1778
+add bridge=T-VLANS comment=HOTSPOT_TATA tagged=sfp-sfpplus1,ether4 vlan-ids=1603
+add bridge=T-VLANS comment=LINK-RENAM-TATA tagged=sfp-sfpplus1,ether4 vlan-ids=1604
+add bridge=T-VLANS comment=GRUPO_VLAN_PIRIA_1100 disabled=yes tagged=sfp-sfpplus1,ether1 vlan-ids=1201,1202,1203,1204,1205,1206,1207,1208,1210,1212
+add bridge=T-VLANS disabled=yes tagged=ether5,sfp-sfpplus1 vlan-ids=1209
+/ip address
+add address=10.22.3.10/30 interface=T-VLANS network=10.22.3.8
+/ip route
+add distance=1 gateway=10.22.3.9
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138-SPEEDNETPA-SWCP-TORRE trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10138-SPEEDNETPA-SWC2-GN
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"170.231.184.4\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
