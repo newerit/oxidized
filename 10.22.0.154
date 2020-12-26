@@ -1,0 +1,68 @@
+#        routerboard: yes
+#         board-name: NetMetal 5
+#              model: 922UAGS-5HPacD
+#      serial-number: 7F2607B487E9
+#      firmware-type: qca9550
+#   factory-firmware: 3.34
+#   current-firmware: 6.46.8
+#   upgrade-firmware: 6.46.8
+# 
+#             channel: long-term
+#   installed-version: 6.46.8
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# 
+# software id = AAAA-1GV6
+#
+# model = 922UAGS-5HPacD
+# serial number = 7F2607B487E9
+/interface bridge
+add fast-forward=no name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,3,7 band=5ghz-onlyac basic-rates-a/g="" channel-width=20/40/80mhz-Ceee country=no_country_set disabled=no frequency=5860 frequency-mode=superchannel ht-basic-mcs="" ht-supported-mcs="" max-station-count=1 mode=ap-bridge nv2-cell-radius=16 nv2-preshared-key=#fbi130878kgb130878##230845 nv2-security=enabled rate-set=configured rx-chains=0,1 scan-list=5740-6040 ssid=PTP_NEP_NH_06 station-roaming=enabled supported-rates-a/g="" tx-chains=0,1 vht-basic-mcs=mcs0-9 vht-supported-mcs=mcs0-9 wireless-protocol=nv2
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+add bridge=bridge1 interface=sfp1
+/ip neighbor discovery-settings
+set discover-interface-list=!dynamic
+/ip address
+add address=10.22.0.154/30 interface=bridge1 network=10.22.0.152
+/ip dns
+set allow-remote-requests=yes servers=8.8.8.8,8.8.4.4
+/ip route
+add distance=1 gateway=10.22.0.153
+/ip ssh
+set allow-none-crypto=yes forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNETPA-AP-PTP-NVH trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10138_SPEEDNETPA-AP-PTP-NVH
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=long-term
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
