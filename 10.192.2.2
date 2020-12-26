@@ -1,0 +1,126 @@
+#        routerboard: yes
+#              model: RouterBOARD 3011UiAS
+#      serial-number: 719F06420D70
+#      firmware-type: ipq8060
+#   factory-firmware: 3.27
+#   current-firmware: 6.43.12
+#   upgrade-firmware: 6.43.12
+# 
+#             channel: stable
+#   installed-version: 6.43.12
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = VLTE-QAVI
+#
+# model = RouterBOARD 3011UiAS
+# serial number = 719F06420D70
+/interface bridge
+add admin-mac=6C:3B:6B:52:9E:40 auto-mac=no name=trunk-1 priority=0x7998 vlan-filtering=yes
+/interface ethernet
+set [ find default-name=ether1 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether2 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether3 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether4 ] comment=CASCALHO l2mtu=8156 mtu=6000
+set [ find default-name=ether5 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether6 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether7 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether8 ] l2mtu=8156 mtu=6000
+set [ find default-name=ether9 ] comment=LINK-BELA-VISTA l2mtu=8156 mtu=6000
+set [ find default-name=ether10 ] comment="AP INTELBRAS" l2mtu=8156 mtu=6000
+set [ find default-name=sfp1 ] auto-negotiation=no comment=LINK-CORE-LASSANCE l2mtu=8158 mtu=6000
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/ip dhcp-server
+add address-pool=default-dhcp disabled=no interface=trunk-1 name=defconf
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=192.168.32.3 target=remote
+/interface bridge port
+add bridge=trunk-1 interface=ether1 pvid=101
+add bridge=trunk-1 interface=ether2 pvid=102
+add bridge=trunk-1 interface=ether3 pvid=103
+add bridge=trunk-1 interface=ether4 pvid=104
+add bridge=trunk-1 interface=ether5 pvid=105
+add bridge=trunk-1 interface=ether6 pvid=106
+add bridge=trunk-1 interface=ether7 pvid=107
+add bridge=trunk-1 interface=ether8 pvid=108
+add bridge=trunk-1 interface=ether10 pvid=110
+add bridge=trunk-1 interface=ether9
+add bridge=trunk-1 interface=sfp1
+/ip neighbor discovery-settings
+set discover-interface-list=LAN
+/interface bridge vlan
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether2 vlan-ids=102
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether3 vlan-ids=103
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether4 vlan-ids=104
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether5 vlan-ids=105
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether6 vlan-ids=106
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether7 vlan-ids=107
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether8 vlan-ids=108
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether10 vlan-ids=110
+add bridge=trunk-1 tagged=ether9,sfp1 untagged=ether1 vlan-ids=101
+add bridge=trunk-1 tagged=ether9,sfp1 vlan-ids=111
+add bridge=trunk-1 tagged=ether9,sfp1 vlan-ids=112
+add bridge=trunk-1 tagged=ether9,sfp1 vlan-ids=113
+/interface list member
+add comment=defconf interface=trunk-1 list=LAN
+add comment=defconf interface=ether1 list=WAN
+/ip address
+add address=10.192.2.2/30 interface=ether9 network=10.192.2.0
+/ip dhcp-client
+# DHCP client can not run on slave interface!
+add comment=defconf dhcp-options=hostname,clientid disabled=no interface=ether1
+/ip dhcp-server network
+add address=192.168.88.0/24 comment=defconf gateway=192.168.88.1
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router.lan
+/ip firewall filter
+add action=accept chain=input comment="defconf: accept established,related,untracked" connection-state=established,related,untracked
+add action=drop chain=input comment="defconf: drop invalid" connection-state=invalid
+add action=accept chain=input comment="defconf: accept ICMP" protocol=icmp
+add action=drop chain=input comment="defconf: drop all not coming from LAN" in-interface-list=!LAN
+add action=accept chain=forward comment="defconf: accept in ipsec policy" ipsec-policy=in,ipsec
+add action=accept chain=forward comment="defconf: accept out ipsec policy" ipsec-policy=out,ipsec
+add action=fasttrack-connection chain=forward comment="defconf: fasttrack" connection-state=established,related
+add action=accept chain=forward comment="defconf: accept established,related, untracked" connection-state=established,related,untracked
+add action=drop chain=forward comment="defconf: drop invalid" connection-state=invalid
+add action=drop chain=forward comment="defconf:  drop all from WAN not DSTNATed" connection-nat-state=!dstnat connection-state=new in-interface-list=WAN
+/ip firewall nat
+add action=masquerade chain=srcnat comment="defconf: masquerade" ipsec-policy=out,none out-interface-list=WAN
+/ip route
+add distance=1 gateway=10.192.2.1
+/lcd
+set time-interval=hour
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=MikroTik trap-version=2
+/system identity
+set name=10112_WIFI-CONNECT-SWC
+/system logging
+add action=newerit topics=system
+add action=newerit topics=error
+add action=newerit topics=e-mail
+add action=newerit topics=dhcp
+add action=newerit topics=info
+add action=newerit topics=account
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=64.233.190.108 from=suportenewerit@gmail.com password=kokar643 port=587 start-tls=yes user=suportenewerit@gmail.com
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
