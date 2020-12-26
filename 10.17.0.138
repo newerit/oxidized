@@ -1,0 +1,116 @@
+#        routerboard: yes
+#              model: 2011UiAS
+#      serial-number: 723B060F78BD
+#      firmware-type: ar9344
+#   factory-firmware: 3.33
+#   current-firmware: 3.33
+#   upgrade-firmware: 6.42.7
+# 
+#             channel: current
+#   installed-version: 6.42.7
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = ACEC-9AFQ
+#
+# model = 2011UiAS
+# serial number = 723B060F78BD
+/interface bridge
+add name=Trunk0
+add fast-forward=no name=lo0 protocol-mode=none
+/interface ethernet
+set [ find default-name=ether1 ] comment=RADIO_ENLACE_BACKUP l2mtu=1522 mac-address=00:0C:42:F5:B1:17
+set [ find default-name=ether2 ] comment="PAINEL LUMEM A" l2mtu=1522 mac-address=00:0C:42:F5:B1:18
+set [ find default-name=ether3 ] comment="PAINEL LUMEM B" l2mtu=1522 mac-address=00:0C:42:F5:B1:19
+set [ find default-name=ether4 ] comment="PAINEL FARIASNET OLGA" l2mtu=1522 mac-address=00:0C:42:F5:B1:1A
+set [ find default-name=ether5 ] l2mtu=1522 mac-address=00:0C:42:F5:B1:1B
+set [ find default-name=ether9 ] comment=SWITCH-RB750
+set [ find default-name=sfp1 ] comment=ENTRADA_WIRLINK_VLAN l2mtu=1522 mac-address=00:0C:42:F5:B1:1C speed=100Mbps
+/interface vlan
+add interface=sfp1 name=vlan1010 use-service-tag=yes vlan-id=1010
+add interface=sfp1 name=vlan1011 use-service-tag=yes vlan-id=1011
+/interface ethernet switch port
+set 0 default-vlan-id=0 vlan-mode=fallback
+set 1 default-vlan-id=0 vlan-mode=fallback
+set 2 default-vlan-id=0 vlan-mode=fallback
+set 3 default-vlan-id=0 vlan-mode=fallback
+set 4 default-vlan-id=0 vlan-mode=fallback
+set 5 default-vlan-id=0 vlan-mode=fallback
+set 11 default-vlan-id=0 vlan-mode=fallback
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=aes-128-cbc
+/routing ospf instance
+set [ find default=yes ] redistribute-connected=as-type-1 router-id=10.17.17.8
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 authentication-protocol=SHA1 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=Trunk0 hw=no interface=ether4
+add bridge=Trunk0 hw=no interface=ether3
+add bridge=Trunk0 hw=no interface=ether7
+add bridge=Trunk0 hw=no interface=ether8
+add bridge=Trunk0 hw=no interface=ether2
+add bridge=Trunk0 hw=no interface=ether5
+add bridge=Trunk0 interface=vlan1010
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface pppoe-server server
+add disabled=no service-name=service1
+/ip address
+add address=10.17.0.25/30 interface=ether6 network=10.17.0.24
+add address=10.17.2.33/30 interface=ether3 network=10.17.2.32
+add address=10.17.2.41/30 interface=ether7 network=10.17.2.40
+add address=10.17.2.57/30 interface=ether8 network=10.17.2.56
+add address=10.17.2.117/30 interface=ether5 network=10.17.2.116
+add address=10.17.2.29/30 interface=ether2 network=10.17.2.28
+add address=10.17.0.57/30 interface=ether9 network=10.17.0.56
+add address=10.17.2.177/30 interface=ether4 network=10.17.2.176
+add address=10.17.0.138/30 interface=vlan1011 network=10.17.0.136
+add address=10.17.3.14/29 interface=ether1 network=10.17.3.8
+add address=10.17.17.8 interface=lo0 network=10.17.17.8
+/ip dns
+set servers=1.1.1.1
+/ip route
+add check-gateway=ping distance=110 gateway=10.17.3.9
+add check-gateway=ping distance=110 gateway=10.17.0.137
+/mpls ldp
+set enabled=yes lsr-id=10.17.17.8 transport-address=10.17.17.8
+/mpls ldp interface
+add
+add interface=ether9
+/routing ospf interface
+add cost=40 interface=ether1 network-type=point-to-point
+add interface=vlan1011 network-type=point-to-point
+add interface=ether9 network-type=point-to-point
+/routing ospf network
+add area=backbone network=10.17.3.8/29
+add area=backbone network=10.17.0.136/30
+add area=backbone network=10.17.0.56/30
+add area=backbone network=10.17.6.8/30
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10142_FARIASNET-VERDEJANTES trap-version=2
+/system clock
+set time-zone-autodetect=no time-zone-name=America/Belem
+/system identity
+set name=10142_FARIASNET-VERDEJANTES
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:07:20
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool bandwidth-server
+set authenticate=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
