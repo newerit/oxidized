@@ -1,0 +1,186 @@
+#        routerboard: yes
+#              model: 912UAG-5HPnD
+#      serial-number: 4DEC01497489
+#      firmware-type: ar9340
+#   factory-firmware: 3.10
+#   current-firmware: 6.42.11
+#   upgrade-firmware: 3.33
+# 
+#             channel: bugfix
+#   installed-version: 6.36.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = G2GE-ZFX3
+#
+/interface bridge
+add mtu=1500 name=trunk0
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5260 ht-basic-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" max-station-count=200 mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#FBI85086833KGB#13 nv2-security=enabled radio-name="OMNI 5G PIRIA" rate-set=configured rx-chains=0,1 ssid=VIRTUAL_STAR_5G_NEP supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface list
+add name=discover
+add name=mactel
+add name=mac-winbox
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=3des
+/routing ospf instance
+set [ find default=yes ] router-id=10.22.22.39
+/snmp community
+set [ find default=yes ] name=neweritmk write-access=yes
+add addresses=0.0.0.0/0 name=public write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set read policy="local,ssh,read,test,winbox,romon,!telnet,!ftp,!reboot,!write,!policy,!password,!web,!sniff,!sensitive,!api,!dude"
+/interface bridge port
+add bridge=trunk0 interface=wlan1
+add bridge=trunk0
+add bridge=trunk0 interface=ether1
+add
+/interface list member
+add interface=ether1 list=discover
+add list=discover
+add interface=ether1 list=mactel
+add interface=ether1 list=mac-winbox
+/interface wireless access-list
+add comment="Antonio da Farmacia" interface=wlan1 mac-address=D4:CA:6D:47:D5:6D
+add comment="PROMO\C7AO SOCIAL" interface=wlan1 mac-address=D4:CA:6D:48:B5:AD
+add comment="JOSE RENER" interface=wlan1 mac-address=D4:CA:6D:B8:AE:A5
+add comment=SAUDE interface=wlan1 mac-address=D4:CA:6D:CF:36:55
+add comment="JUNIOR ESCOSSIO" interface=wlan1 mac-address=D4:CA:6D:C0:FC:57
+add comment=SINDICATO interface=wlan1 mac-address=D4:CA:6D:CB:49:79
+add comment="CAMARA PIRIA" interface=wlan1 mac-address=D4:CA:6D:C4:CC:31
+add comment=AIRTON interface=wlan1 mac-address=4C:5E:0C:A1:4A:A8
+add comment="PREFEITURA PIRIA" interface=wlan1 mac-address=D4:CA:6D:C2:DB:E9
+add comment="MARTA DA RADISCO" interface=wlan1 mac-address=D4:CA:6D:B8:8D:0F
+add comment="SECRETARIA ADMINISTRA\C7AO" interface=wlan1 mac-address=D4:CA:6D:CA:CB:C8
+add comment=DONDA interface=wlan1 mac-address=D4:CA:6D:CE:9C:11
+add comment=SUZANA interface=wlan1 mac-address=D4:CA:6D:C2:DB:DB
+add comment="LILIA MARTINS" interface=wlan1 mac-address=D4:CA:6D:C0:FD:7F
+add comment="LUIZ DA FARMACIA" interface=wlan1 mac-address=D4:CA:6D:C4:C8:4B
+add comment="IGREJA CATOLICA" interface=wlan1 mac-address=D4:CA:6D:CF:15:0B
+add comment="RAIANE PINHO DE AQUINO" interface=wlan1 mac-address=D4:CA:6D:C2:DE:AF
+add comment="MANOEL JONAS AGUIAR" interface=wlan1 mac-address=D4:CA:6D:CE:AA:51
+add comment="JOSUE ARAUJO (Piojota)" interface=wlan1 mac-address=D4:CA:6D:C2:ED:11
+add comment="KHATIANY FIALHO" interface=wlan1 mac-address=D4:CA:6D:C4:D7:F9
+add comment="ANA CRISTINA" interface=wlan1 mac-address=D4:CA:6D:C1:0B:0B
+add comment="JOSE SOARES (ZECA)" interface=wlan1 mac-address=D4:CA:6D:C3:2C:4D
+add comment=DELEGADO interface=wlan1 mac-address=D4:CA:6D:CF:63:CD
+add comment="Messias Rodrigues reis" interface=wlan1 mac-address=D4:CA:6D:DE:AB:07
+add comment="RIBA SERRARIA" interface=wlan1 mac-address=D4:CA:6D:C5:82:85
+add comment="JETRO SILVA PEREIRA" interface=wlan1 mac-address=D4:CA:6D:B8:D1:6B
+add comment="JESSICA RAIMUNDA DE FREITAS" interface=wlan1 mac-address=D4:CA:6D:C5:2D:01
+add comment=ISAIAS interface=wlan1 mac-address=D4:CA:6D:B8:D4:A7
+add comment="MARIA ESTER" interface=wlan1 mac-address=D4:CA:6D:B8:D1:63
+add comment="SHIRLEI MARIA LIMA DOS SANTOS (SAPATARIA)" interface=wlan1 mac-address=D4:CA:6D:B8:E4:31
+add comment="ANTONIA SOUSA DA COSTA" interface=wlan1 mac-address=00:0C:42:BD:1F:1D
+add comment="MARIA IRANETE (JC)" interface=wlan1 mac-address=D4:CA:6D:C3:2C:29
+add comment="A\C7O" interface=wlan1 mac-address=E4:8D:8C:EC:DD:5F
+add comment="DR  DE SOUSA- FARMACIA REAL" interface=wlan1 mac-address=D4:CA:6D:C5:1B:BB
+add comment="JORZIA DIVIT" interface=wlan1 mac-address=D4:CA:6D:C5:2D:05
+add comment="CLERIO MERCADINHO RR" interface=wlan1 mac-address=D4:CA:6D:C1:4A:6B
+add comment="JOZE MELLO" interface=wlan1 mac-address=D4:CA:6D:C3:3F:E7
+add comment=CUBANOS interface=wlan1 mac-address=D4:CA:6D:08:A7:7D
+add comment="Maria rosilene braga barbosa" interface=wlan1 mac-address=D4:CA:6D:0A:05:9B
+add comment="POSTO SAUDE" interface=wlan1 mac-address=D4:CA:6D:07:87:3F
+add comment="MARIA DE JESUS S. MAGALHAES" interface=wlan1 mac-address=D4:CA:6D:08:B8:A1
+add comment="JOSANGELA AGUIAR" interface=wlan1 mac-address=4C:5E:0C:28:A7:29
+add comment=WOOQEMBERG interface=wlan1 mac-address=D4:CA:6D:0C:85:D7
+add comment="ANTONIO EDIVAN (NEGO PIMACON)" interface=wlan1 mac-address=D4:CA:6D:FF:A7:DD
+add comment="ROSIMEIRE DO NASCIMENTO SOUZA" interface=wlan1 mac-address=D4:CA:6D:09:F3:23
+add comment="FARMACIA SAUDE (PMNEP)" interface=wlan1 mac-address=D4:CA:6D:F4:B0:25
+add comment="MARIA SOCORRO (BINHA)" interface=wlan1 mac-address=D4:CA:6D:09:FC:E3
+add comment=EDY-LENE interface=wlan1 mac-address=D4:CA:6D:E3:C7:07
+add comment="VALDIRENE OLIVEIRA (PEDRO SANTOS PROFESSOR)" interface=wlan1 mac-address=D4:CA:6D:E3:CF:3F
+add comment="KYLDERY GOMES MELO" interface=wlan1 mac-address=4C:5E:0C:2F:8B:E5
+add comment="MARIA LUCIA (BAHAMAS BAR)" interface=wlan1 mac-address=D4:CA:6D:E3:C7:DF
+add comment="FERNANDA ANTONIA LIMA SILVA" interface=wlan1 mac-address=D4:CA:6D:07:80:49
+add comment=EDILENE interface=wlan1 mac-address=D4:CA:6D:FF:D8:53
+add comment=Robene interface=wlan1 mac-address=D4:CA:6D:E3:CF:2D
+add comment="KHATIANY FIALHO" interface=wlan1 mac-address=D4:CA:6D:F4:AE:37
+add comment="ANTONIO MARCOS PINELLI DE LOUREN\C7O (NINO)" interface=wlan1 mac-address=4C:5E:0C:42:BE:BF
+add comment="ELIELZA DAVID" interface=wlan1 mac-address=D4:CA:6D:08:B0:F3
+add comment="JOSIDALVA LOJA MARANATA" interface=wlan1 mac-address=D4:CA:6D:09:FF:C1
+add comment="KATYELLE SOARES" interface=wlan1 mac-address=D4:CA:6D:08:B0:1F
+add comment="JORGE LUIZ (Professor Jorge2)" interface=wlan1 mac-address=D4:CA:6D:07:80:57
+add comment="NEIA A\C7O" interface=wlan1 mac-address=D4:CA:6D:09:FC:55
+add comment="SEBASTIAO BEZERRA PEREIRA" interface=wlan1 mac-address=D4:CA:6D:09:FF:FB
+add comment=IVANIA interface=wlan1 mac-address=4C:5E:0C:42:5C:2F
+add comment="FRANCISCA LIMA (ELIELSON)" interface=wlan1 mac-address=D4:CA:6D:F4:AE:33
+add comment="FRANCISCO DE ASSIS REIS DE MOURA" interface=wlan1 mac-address=D4:CA:6D:F4:AE:29
+add comment="ERIA BORROSO MOTA" interface=wlan1 mac-address=D4:CA:6D:08:B2:F5
+add comment="FAZENDA PATRICIO" interface=wlan1 mac-address=D4:CA:6D:FE:B6:8D
+add comment="ANTONIO JUCICLEI" interface=wlan1 mac-address=4C:5E:0C:A3:E8:FD
+add comment=TESTE interface=wlan1 mac-address=D4:CA:6D:4E:6A:4D
+add comment="ANTONIO MARCOS MELO CARVALHO (ZE DANTAS)" interface=wlan1 mac-address=E4:8D:8C:EE:D3:5F vlan-mode=no-tag
+add comment="FRANCISCO EDIMAR PESSOA PINHEIRO ( KATITU)" interface=wlan1 mac-address=E4:8D:8C:8F:EF:71 vlan-mode=no-tag
+add comment="CRAS (PMNEP)" interface=wlan1 mac-address=E4:8D:8C:8F:EF:6F vlan-mode=no-tag
+add comment="FRANCISCO RENER SENA PEREIRA" interface=wlan1 mac-address=E4:8D:8C:BC:0A:9F vlan-mode=no-tag
+add comment="CREAS PIRIA" interface=wlan1 mac-address=E4:8D:8C:95:D1:FB vlan-mode=no-tag
+add comment="EDIVALDO DE LIMA SILVA" interface=wlan1 mac-address=E4:8D:8C:9A:54:CB vlan-mode=no-tag
+add comment="MARIA LUZIETE SANTIAGO" interface=wlan1 mac-address=4C:5E:0C:AD:28:67 vlan-mode=no-tag
+add comment="JOSE MACIEL BRAGA" interface=wlan1 mac-address=E4:8D:8C:75:21:FB vlan-mode=no-tag
+add comment="GERARDO PEREIRA DA COSTA" interface=wlan1 mac-address=E4:8D:8C:C3:3C:8F vlan-mode=no-tag
+add comment="ROGENER TAVARES PENICHE" interface=wlan1 mac-address=6C:3B:6B:01:E0:8F vlan-mode=no-tag
+add comment="ANTONIO GERRI 2" interface=wlan1 mac-address=6C:3B:6B:80:91:61 vlan-mode=no-tag
+add comment="CLEBER HOTEL PIRIA" interface=wlan1 mac-address=D4:CA:6D:6E:11:EC vlan-mode=no-tag
+add comment="ADAILSON SOARES" interface=wlan1 mac-address=D4:CA:6D:08:A4:8D vlan-mode=no-tag
+add comment="FRANCISCO WALEM (AUTO ELETRICA PIRIA)" interface=wlan1 mac-address=D4:CA:6D:C4:D7:57 vlan-mode=no-tag
+add authentication=no comment="ANGELA ALVES" forwarding=no interface=wlan1 mac-address=4C:5E:0C:42:5C:77 vlan-mode=no-tag
+add comment="ANTONIO CLAUMIR" interface=wlan1 mac-address=64:D1:54:6A:7A:E3 vlan-mode=no-tag
+add comment=MOISANIEL interface=wlan1 mac-address=4C:5E:0C:A8:A3:C0 vlan-mode=no-tag
+add comment=ANDRE interface=wlan1 mac-address=4C:5E:0C:ED:E8:05 vlan-mode=no-tag
+add authentication=no comment="ANTONIO FRANCISCO SANTOS" forwarding=no interface=wlan1 mac-address=64:D1:54:AF:CA:7F vlan-mode=no-tag
+/ip address
+add address=10.22.0.162/30 interface=ether1 network=10.22.0.160
+/ip dns
+set cache-size=20480KiB
+/ip proxy
+set cache-path=web-proxy1 parent-proxy=0.0.0.0
+/ip route
+add distance=1 gateway=10.22.0.161
+/ip service
+set telnet address=0.0.0.0/0
+set ftp address=0.0.0.0/0
+set www address=0.0.0.0/0
+set ssh address=0.0.0.0/0
+set www-ssl address=0.0.0.0/0 disabled=no
+set api address=0.0.0.0/0
+set winbox address=0.0.0.0/0
+set api-ssl address=0.0.0.0/0
+/mpls interface
+set [ find default=yes ] mpls-mtu=1520
+/routing ospf network
+add area=backbone network=10.22.0.160/30
+add area=backbone network=10.22.22.39/32
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138_SPEEDNETPA-PO5G trap-version=2
+/system clock
+set time-zone-autodetect=no time-zone-name=America/Belem
+/system identity
+set name=10138_SPEEDNETPA-PO5G
+/system leds
+set 0 interface=wlan1
+add
+/system logging
+add topics=account
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system package update
+set channel=bugfix
+/system routerboard settings
+set cpu-frequency=600MHz init-delay=0s
+/tool mac-server
+set [ find default=yes ] disabled=yes
+add interface=ether1
+/tool mac-server mac-winbox
+set [ find default=yes ] disabled=yes
+add interface=ether1
+/tool romon port
+add
