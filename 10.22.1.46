@@ -1,0 +1,73 @@
+#        routerboard: yes
+#              model: CRS212-1G-10S-1S+
+#      serial-number: 787806412052
+#      firmware-type: qca8719L
+#   factory-firmware: 3.29
+#   current-firmware: 6.44.3
+#   upgrade-firmware: 6.44.3
+# 
+#             channel: stable
+#   installed-version: 6.44.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = CERX-722P
+#
+# model = CRS212-1G-10S-1S+
+# serial number = 787806412052
+/interface bridge
+add admin-mac=6C:3B:6B:D9:4C:FD auto-mac=no name=trunk vlan-filtering=yes
+/interface ethernet
+set [ find default-name=sfp1 ] auto-negotiation=no comment=WEMERSON
+set [ find default-name=sfp2 ] comment="LINK-GARRFAO-NORTE(SFP+5-SWITCH-CORE-GN)"
+set [ find default-name=sfp3 ] auto-negotiation=no comment="OLT-WEMERSON(VLAN-TRANSPORTE-ALDEIA)"
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=trunk interface=ether1
+add bridge=trunk interface=sfp1 pvid=1605
+add bridge=trunk interface=sfp2
+add bridge=trunk interface=sfp3
+add bridge=trunk interface=sfp4
+add bridge=trunk interface=sfp5
+add bridge=trunk interface=sfp6
+add bridge=trunk interface=sfp7
+add bridge=trunk interface=sfp8
+add bridge=trunk interface=sfp9
+add bridge=trunk interface=sfp10
+add bridge=trunk interface=sfpplus1
+/interface bridge vlan
+add bridge=trunk tagged=sfp2 untagged=sfp1 vlan-ids=1605
+add bridge=trunk tagged=sfp2,sfp3 vlan-ids=600
+/ip address
+add address=10.22.1.46/30 comment=defconf interface=trunk network=10.22.1.44
+/ip route
+add distance=1 gateway=10.22.1.45
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10138-SPEEDNETPA-SW-POPWM trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10138-SPEEDNETPA-SW-POPWM
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            ++++|+35 3582-2807|+++++\n                            ++++|+35 98471-8390|+++++\n                            +|contato@newerit.com|" show-at-login=no
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
