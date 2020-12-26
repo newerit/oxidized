@@ -1,0 +1,67 @@
+#        routerboard: yes
+#              model: SXT 5nD r2
+#      serial-number: 522404B228FC
+#      firmware-type: ar9344
+#   factory-firmware: 3.17
+#   current-firmware: 3.17
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = LXWT-J6S1
+#
+# model = SXT 5nD r2
+# serial number = 522404B228FC
+/interface bridge
+add fast-forward=no mtu=1500 name=bridge1 protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] band=5ghz-a/n country=brazil disabled=no frequency=5200 frequency-mode=superchannel mode=station-bridge ssid="N-SISTEM 5.8 B FRIA"
+/interface list
+add exclude=dynamic name=discover
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=3des
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/interface list member
+add interface=ether1 list=discover
+add interface=wlan1 list=discover
+add interface=bridge1 list=discover
+/ip address
+add address=10.119.19.5/24 interface=ether1 network=10.119.19.0
+/ip route
+add distance=1 gateway=10.119.19.1
+/ip service
+set api disabled=yes
+/ip ssh
+set forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location="BF BARRAS" trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name="BF BARRAS"
+/system leds
+set 0 interface=wlan1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
