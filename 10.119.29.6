@@ -1,0 +1,82 @@
+#        routerboard: yes
+#              model: Groove A-52HPn
+#      serial-number: 4A5104500932
+#      firmware-type: ar9340
+#   factory-firmware: 3.17
+#   current-firmware: 3.17
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 2B10-40AF
+#
+# model = Groove A-52HPn
+# serial number = 4A5104500932
+/interface bridge
+add fast-forward=no mtu=1500 name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] band=2ghz-onlyg basic-rates-a/g=9Mbps,12Mbps,18Mbps,36Mbps,48Mbps,54Mbps basic-rates-b=5.5Mbps,11Mbps country=brazil disabled=no frequency=2472 mode=ap-bridge name=wlan1-gateway rate-set=configured scan-list=2472 ssid="NSF VITORIA" supported-rates-a/g=9Mbps,12Mbps,18Mbps,36Mbps,48Mbps,54Mbps supported-rates-b=5.5Mbps,11Mbps wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full name=ether1-local
+/interface list
+add exclude=dynamic name=discover
+add name=mactel
+add name=mac-winbox
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=aes-128-cbc
+/ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1-local
+add bridge=bridge1 interface=wlan1-gateway
+/ip neighbor discovery-settings
+set discover-interface-list=discover
+/interface list member
+add interface=ether1-local list=discover
+add interface=bridge1 list=discover
+add interface=ether1-local list=mactel
+add interface=ether1-local list=mac-winbox
+/ip address
+add address=10.119.29.6/24 interface=bridge1 network=10.119.29.0
+/ip dns
+set allow-remote-requests=yes
+/ip dns static
+add address=192.168.88.1 name=router
+/ip ipsec policy
+set 0 dst-address=0.0.0.0/0 src-address=0.0.0.0/0
+/ip route
+add distance=1 gateway=10.119.29.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="OMINI VITORIA" trap-version=2
+/system clock
+set time-zone-autodetect=no time-zone-name=America/Sao_Paulo
+/system identity
+set name="OMINI VITORIA"
+/system leds
+set 0 interface=wlan1-gateway
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watch-address=10.0.180.1
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
+/tool mac-server
+set allowed-interface-list=mactel
+/tool mac-server mac-winbox
+set allowed-interface-list=mac-winbox
