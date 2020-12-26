@@ -1,0 +1,87 @@
+#        routerboard: yes
+#              model: CRS112-8G-4S
+#           revision: r2
+#      serial-number: 94DB08C9C78E
+#      firmware-type: qca8513L
+#   factory-firmware: 6.42.7
+#   current-firmware: 6.42.7
+#   upgrade-firmware: 6.47.4
+# 
+#             channel: stable
+#   installed-version: 6.47.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = LC36-JT5Y
+#
+# model = CRS112-8G-4S
+# serial number = 94DB08C9C78E
+/interface bridge
+add name=Bridge protocol-mode=none
+/interface ethernet
+set [ find default-name=ether1 ] name="ether1-POE iN" speed=100Mbps
+set [ find default-name=ether2 ] name="ether2-JUMP 3011" speed=100Mbps
+set [ find default-name=ether3 ] speed=100Mbps
+set [ find default-name=ether4 ] speed=100Mbps
+set [ find default-name=ether5 ] name=ether5-PTP-MONICA speed=100Mbps
+set [ find default-name=ether6 ] name="ether6-NOVA-FRAN\C7A-2" speed=100Mbps
+set [ find default-name=ether7 ] name="ether7-RANCHO PLATERO" speed=10Mbps
+set [ find default-name=ether8 ] name=ether8-SPEEDNET_PIACATU speed=100Mbps
+set [ find default-name=sfp9 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full auto-negotiation=no
+set [ find default-name=sfp10 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full name=sfp10-RODRIGO
+set [ find default-name=sfp11 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full auto-negotiation=no
+set [ find default-name=sfp12 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/user group
+set full policy="local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,password,web,sniff,sensitive,api,romon,dude,tikapp"
+/interface bridge port
+add bridge=Bridge interface=sfp9
+add bridge=Bridge interface=sfp10-RODRIGO
+add bridge=Bridge interface=sfp12
+add bridge=Bridge interface="ether2-JUMP 3011"
+add bridge=Bridge interface=ether3
+add bridge=Bridge interface=ether4
+add bridge=Bridge interface=ether5-PTP-MONICA
+add bridge=Bridge interface="ether6-NOVA-FRAN\C7A-2"
+add bridge=Bridge interface="ether7-RANCHO PLATERO"
+add bridge=Bridge interface=ether8-SPEEDNET_PIACATU
+add bridge=Bridge interface=sfp11
+/ip neighbor discovery-settings
+set discover-interface-list=all
+/ip address
+add address=10.236.9.25/24 interface=Bridge network=10.236.9.0
+/ip dns
+set servers=1.1.1.1
+/ip firewall nat
+add action=dst-nat chain=dstnat disabled=yes dst-address=10.236.9.25 dst-port=9595 protocol=tcp to-addresses=192.168.1.20 to-ports=443
+/ip route
+add distance=1 gateway=10.236.9.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=PIACATU-SW-FIBRA-CLI trap-version=2
+/system clock
+set time-zone-name=America/Campo_Grande
+/system identity
+set name=PIACATU-SW-FIBRA-CLI
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|" show-at-login=no
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
