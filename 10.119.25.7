@@ -1,0 +1,58 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: 77CC089408CF
+#      firmware-type: ar9340
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = GT3R-53YC
+#
+# model = 912UAG-5HPnD
+# serial number = 77CC089408CF
+/interface bridge
+add admin-mac=CC:2D:E0:62:D5:70 auto-mac=no name=bridge protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-a/n channel-width=20/40mhz-Ce country=brazil disabled=no frequency=5800 frequency-mode=superchannel mode=bridge nv2-cell-radius=15 rx-chains=0,1 ssid="SERRA SITIO" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface list
+add name=WAN
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge comment=defconf hw=no interface=ether1
+add bridge=bridge comment=defconf interface=wlan1
+/interface list member
+add interface=ether1 list=WAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.25.7/24 interface=bridge network=10.119.25.0
+/ip route
+add distance=1 gateway=10.119.25.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="SERRA CURRAL SITIO" trap-version=2
+/system identity
+set name="MATINHA SITIO"
+/system logging
+add action=newerit topics=account,info
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
