@@ -1,0 +1,489 @@
+#        routerboard: yes
+#              model: RB4011iGS+
+#           revision: r2
+#      serial-number: D4440C255893
+#      firmware-type: al2
+#   factory-firmware: 6.45.9
+#   current-firmware: 6.45.9
+#   upgrade-firmware: 6.45.9
+# 
+#             channel: stable
+#   installed-version: 6.45.9
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = HJW1-STYF
+#
+# model = RB4011iGS+
+# serial number = D4440C255893
+/interface bridge
+add name=loopback
+/interface ethernet
+set [ find default-name=ether1 ] comment=ENTRADA_LINK
+set [ find default-name=ether2 ] comment=OLT-UPLINK:GE1
+set [ find default-name=ether3 ] comment=OLT:MGMT
+set [ find default-name=ether4 ] comment=REDE-METRO-UTP
+/interface vlan
+add comment=PTP-INDUA interface=ether1 name=vlan10 vlan-id=10
+add comment=VLAN31:PON1 interface=ether2 name=vlan31 vlan-id=31
+add comment=VLAN32:PON2 interface=ether2 name=vlan32 vlan-id=32
+add comment=VLAN33:PON3 interface=ether2 name=vlan33 vlan-id=33
+add comment=VLAN34:PON3 interface=ether2 name=vlan34 vlan-id=34
+/interface ethernet switch port
+set 0 default-vlan-id=0
+set 1 default-vlan-id=0
+set 2 default-vlan-id=0
+set 3 default-vlan-id=0
+set 4 default-vlan-id=0
+set 5 default-vlan-id=0
+set 6 default-vlan-id=0
+set 7 default-vlan-id=0
+set 8 default-vlan-id=0
+set 9 default-vlan-id=0
+set 10 default-vlan-id=0
+set 11 default-vlan-id=0
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=PPPoE ranges=10.122.132.2-10.122.133.255
+/ppp profile
+set *0 local-address=10.122.132.0 remote-address=PPPoE
+add address-list=block change-tcp-mss=yes local-address=10.122.0.1 name=BLOQUEADO only-one=yes rate-limit=512K/1M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add address-list=aviso change-tcp-mss=yes local-address=10.122.0.1 name=DEBITO only-one=yes rate-limit=512k/1024k remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes local-address=10.122.0.1 name=2_MEGA only-one=yes rate-limit=1M/2M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes local-address=10.122.0.1 name=3_MEGA only-one=yes rate-limit=1M/3M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes local-address=10.122.0.1 name=4_MEGA only-one=yes rate-limit=2M/4M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes local-address=10.122.0.1 name=5_MEGA only-one=yes rate-limit=3M/5M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes local-address=10.122.0.1 name=25_MEGA only-one=yes rate-limit=25M/25M remote-address=PPPoE use-compression=no use-encryption=no use-mpls=no use-upnp=no
+add change-tcp-mss=yes comment=NAO-ALTERAR dns-server=4.2.2.1,8.8.8.8 name=RECEITANET use-encryption=yes
+add local-address=10.122.0.1 name=VPN remote-address=PPPoE use-mpls=yes
+add local-address=10.122.0.2 name=ALTAREDE remote-address=PPPoE
+add local-address=10.122.132.0 name=02_INTERNET_005_MB only-one=yes rate-limit=5000k/5000k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_003_MB only-one=yes rate-limit=2000k/3000k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_004_MB only-one=yes rate-limit=100k/100k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_005_MB only-one=yes rate-limit=5000k/5000k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_005_MB_CAP only-one=yes rate-limit=5000k/5000k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_008_MB_CAP only-one=yes rate-limit=8000k/8000k remote-address=PPPoE
+add local-address=10.122.132.0 name=INTERNET_010_MB_CAP only-one=yes rate-limit=100000k/10000k remote-address=PPPoE
+set *FFFFFFFE use-compression=no use-encryption=default use-mpls=no use-upnp=no
+/routing bgp instance
+set default as=65122 redistribute-connected=yes redistribute-static=yes
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/ip firewall connection tracking
+set enabled=yes loose-tcp-tracking=no
+/interface pppoe-server server
+add default-profile=ALTAREDE disabled=no interface=vlan31 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=SVR_VLAN31
+add default-profile=ALTAREDE disabled=no interface=vlan32 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=SVR_VLAN32
+add default-profile=ALTAREDE disabled=no interface=vlan33 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=SVR_VLAN33
+add default-profile=ALTAREDE disabled=no interface=vlan34 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=SVR_VLAN34
+add default-profile=ALTAREDE disabled=no interface=ether4 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=ETHER4
+add default-profile=ALTAREDE disabled=no interface=ether2 keepalive-timeout=30 max-mru=1492 max-mtu=1492 one-session-per-host=yes service-name=ETHER2
+/ip address
+add address=10.122.1.10/30 comment=LINK-CAP-POCH interface=vlan10 network=10.122.1.8
+add address=10.122.11.1/30 comment=MGMT:OLT:INDUA interface=ether3 network=10.122.11.0
+add address=164.163.178.23 comment=LINK-STA-LUZIA interface=vlan10 network=10.122.1.13
+add address=10.122.0.2 comment=RID interface=loopback network=10.122.0.2
+/ip dns
+set servers=1.1.1.1,8.8.8.8
+/ip firewall address-list
+add address=164.163.176.0/22 list=allow-firewall
+add address=177.66.65.0/24 list=allow-firewall
+add address=10.0.0.0/8 list=allow-firewall
+/ip firewall filter
+add action=accept chain=forward src-address-list=allow-firewall
+add action=accept chain=input src-address-list=allow-firewall
+add action=drop chain=input dst-address=164.163.178.23 dst-port=21-25 in-interface=vlan10 protocol=tcp
+add action=drop chain=input dst-address=164.163.178.23 dst-port=53,161,162 in-interface=vlan10 protocol=udp
+add action=drop chain=forward comment="ALTAREDE DROP CLIENTE BLOQUEADO - N\C3O EXCLUIR OU ALTERAR" dst-port=!8282 protocol=tcp src-address-list=BLOQUEIO
+add action=drop chain=forward comment="ALTAREDE DROP ICMP CLIENTE BLOQUEADO - N\C3O EXCLUIR OU ALTERAR" protocol=icmp src-address-list=BLOQUEIO
+add action=drop chain=forward comment="ALTAREDE DROP UDP CLIENTE BLOQUEADO - N\C3O EXCLUIR OU ALTERAR" dst-port=!53 protocol=udp src-address-list=BLOQUEIO
+/ip firewall nat
+add action=dst-nat chain=dstnat comment="ALTAREDE BLOQUEIA CLIENTES - N\C3O EXCLUIR OU ALTERAR" dst-port=80 protocol=tcp src-address-list=BLOQUEIO to-addresses=187.16.251.155 to-ports=8282
+add action=return chain=dstnat comment="ALTAREDE BLOQUEIA CLIENTES - N\C3O EXCLUIR OU ALTERAR" dst-port=!80 protocol=tcp src-address-list=BLOQUEIO to-addresses=187.16.251.155 to-ports=8282
+add action=dst-nat chain=dstnat comment="ALTAREDE SEMIBLOQUEIA CLIENTES - N\C3O EXCLUIR OU ALTERAR" dst-port=80 protocol=tcp src-address-list=SEMIBLOQUEIO to-addresses=187.16.251.155 to-ports=8281
+add action=return chain=dstnat comment="ALTAREDE BLOQUEIA CLIENTES UDP - N\C3O EXCLUIR OU ALTERAR" protocol=udp src-address-list=BLOQUEIO
+/ip route
+add check-gateway=ping distance=1 gateway=10.122.1.13
+/ppp aaa
+set interim-update=2m use-radius=yes
+/ppp secret
+add comment=VPN_EXTERNA name=Renan password=102030405060 profile=25_MEGA
+add comment="ANTONIA DUARTE DE LIMA FILHA" name=nezinha_ password=123 profile=5_MEGA service=pppoe
+add name=aureliana_aguiar password=123 profile=3_MEGA service=pppoe
+add comment="LUCIANA RODRIGUES DO NASCIMENTO COUTINHO" name=luciana_rodrigues password=123 profile=5_MEGA service=pppoe
+add comment=sistema disabled=yes name=abdias password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=abimael_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=adail_jose password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=adeilson_desouza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ademir_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=adriano_donascimento password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=alcineia_dosocorro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=aldeniza_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=aldilene_dasilva password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=alexandre password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=alexsandra_dealmeida password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=alexsandro_souza password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=alinne_cardoso password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=alziones_delima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=amanda_adriele password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=analice_sales password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ana_carmen password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ana_karolinny password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ana_maria password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ana_oliveira password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=andre password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=andreia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=andrielle_barbosa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=angela_maria password=123 profile=INTERNET_010_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=angelica_freitas password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=aniele password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=anne_karoliny password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name="antonia nascimento" password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia-joiciane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_bernardo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_carvalho password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_cristiane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_edineia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_erica password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_fernandes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_janete password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_mikaelly password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_oliveira password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=antonia_ribeiro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_roseane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_sousa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonia_suane password=123 profile=INTERNET_010_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=antonia_vandineia password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_anderson password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_frota password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_joao password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=antonio_jose password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_marcio password=-123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_railson password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_raimundo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_ribeiro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_ronaldo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_silva password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_texeira password=123 profile=INTERNET_004_MB service=pppoe
+add comment=sistema disabled=yes name=antonio_vanderley password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=apoliana_amelia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=arlindo_barbosa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=artur_souza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ataniel_dossantos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=aurinete_oliveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=azaias password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=bastiana_ferreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=benedito_barboza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=bernardo_goncalves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=bruna_ferreira password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=carlos_antonio password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=chico_araujo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=chico_tonheiro password=123 profile=25_MEGA service=pppoe
+add comment=sistema disabled=yes name=cirian_lopes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=claudemir_ribeiro password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=cleice_dosreis password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=cleidiane_santos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=clemilda_desousa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=cleuciane_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=creuzandina_nunes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=cristiana_silva password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=cristiane_gomes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=cristiano_dasilva password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=daniele_nascimento password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=danive_torres password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=danrley_figueiredo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=daviane password=123 profile=02_INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=dayse_furtada password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=denivan_lopes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=deuvane_desouza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=dheyzon_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=dona_cinei password=abcd profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=edinair_lima password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=edinaldo_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edinete_dasilva password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edite_paulo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edivane_deoliveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edson_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edson_ferreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=edson_ribeiro password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=elaine_deoliveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=eldiz password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elessandra password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=eliana_costa password=123 profile=25_MEGA service=pppoe
+add comment=sistema disabled=yes name=eliana_donascimento password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=eliane_silva password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elieudo_sousa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elivaldo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elkleia_pedreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elson password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=elzileide_gusmao password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=emanuel_dejesus password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=emanuel_ronaldo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=erisma password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=erisvaldo_lucena password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=evandro_bernardo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=evila_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=fabricia_desousa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=fagno_gomes password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=fernanda_beatriz password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francinete password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_adeline password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_borges password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_carvalho password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_claudia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_cordeiro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_elenilma password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_freire password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisca_marcia password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_bento password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_dearaujo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_moura password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_neto password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_ronivaldo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=francisco_valdez password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=gabriel_silveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=geane_azevedo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=gean_carla password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=gecineide_dossantos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=genira_dasilva password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=gilkid password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=gilza_decarvalho password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=girlane_favacho password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=hana_demesquita password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=helem_ferreira password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=heloiza_helena password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=henrique password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=herica password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=iago_deaguiar password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=idelmice_amaral password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ieda_maria password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ilcicleia_andre password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=iraceli password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=iraci_teixeira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ivonete_morais password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=izaura_oliveira password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jailton_brito password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jamile password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=janessa_goncalves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jefferson_mesquita password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jesmiel_lima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=joao_maria password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=joao_paulo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=joao_severino password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=joel password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=joelson_barreto password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=joel_ximendes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jorge_duarte password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jorge_luiz password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=josafa password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=jose password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=jose_aldecir password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=jose_liberato password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jose_nazareno password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jose_rai password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jose_ronaldo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jose_sildomar password=123 profile=02_INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=jose_valcirlei password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=josi password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=josiane_santos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=josimar password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=josinei_dela password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=jovelina_pereira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=joziane_lopes password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=joziane_marques password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=julita password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=junior password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=junior_souza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=juvenal password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=karina password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=karla_mayara password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=karmem_celia password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=khuby_cardorso password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=laercio password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=lailson_desousa password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=leandro_cunha password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=leidiane_costa password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=leila_vane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=lene_doedivaldo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=lenilsa_freitas password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=leonaldo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=liciane password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=lourival_lopes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=lucia_mota password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=luciene password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=lucilene_bernado password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=lucirene_lima password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=lucivaldo_ferreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=luzinara password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maciana_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maciel password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=makyson_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=manuel password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=marcia_cleia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=marciele_marques password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=marcilene_dosocorro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=marcilene_souza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=marcos_genesio password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_aurilene password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_bernardo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_cardoso password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_claudete password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=maria_cleitiele password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_daconceicao password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_dalciane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_denazare password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_donascimento password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_dosocorro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_edilene password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_edith password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_erivalda password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_estela password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_fabiane password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_geisiane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_gucilene password=abcd profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_jose password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_josineia password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_jucicleia password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_leonete password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_lucimar password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_maciele password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_nascimento password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=maria_nazare password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_reiziane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_ribeiro password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=maria_rosiane password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_rosilene password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_socorro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_unila password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_vicencia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=maria_zuleide password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=marilene password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=marilene_lima password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=mateus_dasilva password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=max_luiz password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=michele_dossantos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=michelle_alves password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=milena_carvalho password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=miqueias password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=mirely password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=nadia password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=naiara_lopes password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=narobes_correia password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=nathya_milena password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=nayane_carvalho password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema name=nayra password=123 profile=25_MEGA service=pppoe
+add comment=sistema disabled=yes name=nazare password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=nazare_cristina password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=nelson_roberto password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=neta_lima password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=nezinha password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=nova_ramos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ocieene_santos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=otilhia_naelly password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=paulo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=paulo_victor password=- profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=pedrina_alves password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=pedro_erlison password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=popinha password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=rafaela_silva password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=raimunda_ivonete password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=raimunda_luiza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=raimundo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=raimundo_alessandro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=raimundo_ramos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=regiana password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=renan_borges password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=renata_glenda password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rita_dossantos password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rita_elenilda password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=robenilson_justino password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=ronivaldo_balbino password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rosangela_queiroz password=abcd profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rosa_dealbuquerque password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rosa_edileuza password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=roselia_balbino password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rosemary_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rosiane_ferreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=rubenita password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=samara password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=sandi_delima password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=sandro password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=sandy_cristina password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=saulo password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=sebastiana_ferreira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=sebastiana_francisca password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=sebastiana_marinheiro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=silvana password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=simone_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=simonir_oliveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=sirene_pereira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=solangela_morais password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=suzana_costa password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=tamires password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=tamires_cordeiro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=tamires_desouza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=taynara password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=thiago_decastro password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=tyron_oliveira password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=valdecy_correia password=123 profile=02_INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=valdene_borges password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=valdir_desouza password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=valmir password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=vanair_reis password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=vanderlei password=123 profile=25_MEGA service=pppoe
+add comment=sistema disabled=yes name=vanesia_rodrigues password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=vangela_patricia password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=vania_oliveira password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name="vereador soiar" password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=victor password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=vitoria_amanda password=123 profile=25_MEGA service=pppoe
+add comment=sistema disabled=yes name=vivian_araujo password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=wagner_costa password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=waldemiro_santos password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=wallaci_souza password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=wanderson password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=wanderson_jose password=123 profile=INTERNET_008_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=wanderson_santiago password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=weliton_soares password=123 profile=INTERNET_005_MB_CAP service=pppoe
+add comment=sistema disabled=yes name=wenderson_oliveira password=123 profile=INTERNET_003_MB service=pppoe
+add comment=sistema disabled=yes name=ze_maria password=123 profile=INTERNET_005_MB service=pppoe
+add comment=sistema disabled=yes name=zildace_lopes password=123 profile=INTERNET_003_MB service=pppoe
+/radius
+add address=187.16.251.155 comment="RADIUS ALTAREDE" secret=altarede service=ppp timeout=3s
+/radius incoming
+set accept=yes
+/routing bgp peer
+add in-filter=IN-BORDA keepalive-time=30s multihop=yes name=PEER_BORDA nexthop-choice=force-self out-filter=OUT-BORDA remote-address=10.122.1.9 remote-as=65122 update-source=10.122.1.10
+/routing filter
+add action=accept chain=OUT-BORDA prefix=10.122.132.0/24 prefix-length=0-32
+add action=accept chain=IN-BORDA
+add action=accept chain=OUT-BORDA prefix=10.122.133.0/24 prefix-length=0-32
+add action=accept chain=OUT-BORDA
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10122-RMCONNECT-BRAS-INDUA trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10122-RMCONNECT-BRAS-INDUA
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            ++++|+35 3582-2807|+++++\n                            ++++|+35 98471-8390|+++++\n                            +|contato@newerit.com|" show-at-login=no
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
