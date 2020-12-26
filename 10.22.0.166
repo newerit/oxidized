@@ -1,0 +1,88 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: 681402436CD1
+#      firmware-type: ar9340
+#   factory-firmware: 3.24
+#   current-firmware: 6.43.4
+#   upgrade-firmware: 6.43.4
+# 
+#             channel: current
+#   installed-version: 6.43.4
+#              status: ERROR: could not resolve dns name
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 2YTN-LYQJ
+#
+# model = 912UAG-5HPnD
+# serial number = 681402436CD1
+/interface bridge
+add fast-forward=no name=Bridge-Internet
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=4,5,6,7 band=5ghz-a/n basic-rates-a/g="" channel-width=20/40mhz-Ce comment=SPEEDNET_PN-04 country=brazil disabled=no frequency=5300 ht-basic-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" ht-supported-mcs="mcs-8,mcs-9,mcs-10,mcs-11,mcs-12,mcs-13,mcs-14,mcs-15,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23" mode=ap-bridge nv2-cell-radius=10 nv2-preshared-key=#Fbi85086833kgb#NEP02# nv2-security=enabled rate-set=configured rx-chains=0,1 ssid=SPEEDNET_PN-04 supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless manual-tx-power-table
+set wlan1 comment=SPEEDNET_PN-04
+/interface wireless nstreme
+set wlan1 comment=SPEEDNET_PN-04
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/routing ospf instance
+set [ find default=yes ] router-id=10.22.22.80
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk write-access=yes
+add addresses=0.0.0.0/0 name=public write-access=yes
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=192.168.37.2 target=remote
+/interface bridge port
+add bridge=Bridge-Internet interface=wlan1
+add bridge=Bridge-Internet interface=*5
+add bridge=Bridge-Internet interface=ether1
+/interface wireless access-list
+add comment=CEZAR interface=wlan1 mac-address=B8:69:F4:31:C9:DF vlan-mode=no-tag
+add comment="RADISCO CENTER" interface=wlan1 mac-address=4C:5E:0C:A3:EA:3B vlan-mode=no-tag
+/ip address
+add address=10.22.0.166/30 interface=ether1 network=10.22.0.164
+/ip route
+add distance=1 gateway=10.22.0.165
+/ip service
+set www port=8078
+set api disabled=yes
+/mpls interface
+set [ find default=yes ] mpls-mtu=1500
+/mpls ldp
+set enabled=yes lsr-id=10.22.22.80 transport-address=10.22.22.80
+/mpls ldp interface
+add interface=ether1
+/routing ospf network
+add area=backbone network=10.22.22.80/32
+add area=backbone network=10.22.0.164/30
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138_SPEEDNETPA-PPN-04 trap-version=2
+/system clock
+set time-zone-name=America/Fortaleza
+/system identity
+set name=10138_SPEEDNETPA-PPN-04
+/system leds
+set 0 interface=wlan1
+/system logging
+add action=newerit topics=info
+add action=newerit topics=error
+add topics=account
+add action=newerit topics=info
+add action=newerit topics=error
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=10m name=Protect-Nw on-event=Remove policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-time=startup
+/tool e-mail
+set address=64.233.190.108 from=suportenewerit@gmail.com password=kokar643 port=587 start-tls=yes user=suportenewerit@gmail.com
