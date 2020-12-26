@@ -1,0 +1,75 @@
+#        routerboard: yes
+#         board-name: BaseBox 5
+#              model: 912UAG-5HPnD
+#      serial-number: 8CFC08A898C2
+#      firmware-type: ar9340
+#   factory-firmware: 3.41
+#   current-firmware: 3.41
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+#              status: ERROR: could not resolve dns name
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = NAYL-HE9F
+#
+# model = 912UAG-5HPnD
+# serial number = 8CFC08A898C2
+/interface bridge
+add name=TESTE priority=0x1000
+add name=bridge1 protocol-mode=none
+/interface wireless
+set [ find default-name=wlan1 ] ampdu-priorities=0,1,2,3,4,5,6,7 band=5ghz-onlyn basic-rates-a/g="" channel-width=20/40mhz-eC comment=5785 disabled=no frequency=5320 frequency-mode=superchannel mode=ap-bridge nv2-cell-radius=42 radio-name="BQxMESTI\C7O" rate-set=configured rx-chains=0,1 ssid=BOQ_MESTICO supported-rates-a/g="" tx-chains=0,1 wireless-protocol=nv2 wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+/interface wireless manual-tx-power-table
+set wlan1 comment=5785
+/interface wireless nstreme
+set wlan1 comment=5785 enable-nstreme=yes
+/interface list
+add name=WAN
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=dhcp_pool0 ranges=192.168.10.2-192.168.10.254
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=ether1
+add bridge=bridge1 interface=wlan1
+/interface list member
+add interface=ether1 list=WAN
+add interface=wlan1 list=LAN
+/ip address
+add address=10.119.9.12/24 interface=ether1 network=10.119.9.0
+/ip route
+add distance=1 gateway=10.119.9.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location=10118_NETSF-PTP-BQxMES-AP trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name=10118_NETSF-PTP-BQxMES-AP
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"newerit.com\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
+/system watchdog
+set automatic-supout=no watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
