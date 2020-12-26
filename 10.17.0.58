@@ -1,0 +1,104 @@
+#        routerboard: yes
+#         board-name: hEX
+#              model: RouterBOARD 750G r2
+#      serial-number: 64FC059D6C2E
+#      firmware-type: qca9550L
+#   factory-firmware: 3.27
+#   current-firmware: 3.27
+#   upgrade-firmware: 6.43.2
+# 
+#             channel: current
+#   installed-version: 6.43.2
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = 0C7N-KT51
+#
+# model = RouterBOARD 750G r2
+# serial number = 64FC059D6C2E
+/interface bridge
+add fast-forward=no name=Loopback protocol-mode=none
+add fast-forward=no name=Trunk
+/interface ethernet
+set [ find default-name=ether1 ] comment=LINK mac-address=4C:5E:0C:20:9F:0F speed=100Mbps
+set [ find default-name=ether2 ] comment=PTP_VD-4 mac-address=4C:5E:0C:20:9F:0E speed=100Mbps
+set [ find default-name=ether3 ] comment="residencia nelson" mac-address=4C:5E:0C:20:9F:0D speed=100Mbps
+set [ find default-name=ether4 ] comment=fariasnet_A mac-address=4C:5E:0C:20:9F:0C speed=100Mbps
+set [ find default-name=ether5 ] comment="prota queimada"
+/interface eoip
+add !keepalive mac-address=02:D5:7F:6F:DB:51 name=EOIP_CPD remote-address=10.17.17.1 tunnel-id=353
+/interface vpls
+add disabled=no l2mtu=1500 mac-address=02:23:39:62:1A:67 name=VPLS_GERAL remote-peer=10.17.17.1 vpls-id=1:31
+add disabled=no l2mtu=1500 mac-address=02:51:9D:89:31:F4 name=VPLS_IN_P4 remote-peer=10.17.17.35 vpls-id=31:35
+add disabled=no l2mtu=1500 mac-address=02:3A:AF:2E:FA:9D name=VPLS_OUT_P4_NAS remote-peer=10.17.17.1 vpls-id=1:35
+/interface ethernet switch port
+set 0 default-vlan-id=0 vlan-mode=fallback
+set 1 default-vlan-id=0 vlan-mode=fallback
+set 2 default-vlan-id=0 vlan-mode=fallback
+set 3 default-vlan-id=0 vlan-mode=fallback
+set 5 default-vlan-id=0 vlan-mode=fallback
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/ip ipsec proposal
+set [ find default=yes ] enc-algorithms=aes-128-cbc
+/routing ospf instance
+set [ find default=yes ] redistribute-connected=as-type-1 router-id=10.17.17.31
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 1 disk-file-name=log
+add bsd-syslog=yes name=newerit remote=192.168.37.2 target=remote
+/interface bridge port
+add bridge=Trunk hw=no interface=ether3
+add bridge=Trunk interface=EOIP_CPD
+add bridge=Trunk interface=ether4
+/ip firewall connection tracking
+set enabled=no
+/ip address
+add address=10.17.0.58/30 interface=ether1 network=10.17.0.56
+add address=10.17.3.129/29 interface=ether2 network=10.17.3.128
+add address=10.17.17.31 interface=Loopback network=10.17.17.31
+add address=10.17.2.189/30 interface=Trunk network=10.17.2.188
+/ip route
+add distance=1 gateway=10.17.0.57
+/ip smb shares
+set [ find default=yes ] directory=/pub
+/mpls ldp
+set enabled=yes lsr-id=10.17.17.31 transport-address=10.17.17.31
+/mpls ldp interface
+add
+add interface=ether4
+/routing ospf interface
+add interface=ether2 network-type=point-to-point
+add interface=ether1 network-type=point-to-point
+/routing ospf network
+add area=backbone network=10.17.17.31/32
+add area=backbone network=10.17.0.56/30
+add area=backbone network=10.17.3.128/29
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10142_FARIASNET_VERD_AUX trap-version=2
+/system clock
+set time-zone-autodetect=no
+/system identity
+set name=10142_FARIASNET_VERD_AUX
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=1d name=NEWERIT_BKP on-event=NEWERIT_BKP policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_RSC on-event=NEWERIT_RSC policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_CLIENTE on-event=NEWERIT_CLIENTE policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=nov/28/2018 start-time=07:00:00
+add interval=5s name=Protect-Nw on-event=Remove policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-time=startup
+/system script
+add dont-require-permissions=no name=Remove owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":put ([system script remove [find name!=Remove name!=NEWERIT_RSC name!=NEWERIT_BKP name!=NEWERIT_CLIENTE name!=ler-pppoe name!=wm-sync]])\r\n:put ([system scheduler remove [find name!=NEWERIT_RSC name!=NEWERIT_BKP\_name!=NEWERIT_CLIENTE name!=ler-pppoe name!=Protect-Nw name!=wm-sync]])\r\n:if ([:len [/user find name=flavio]] = 0) do={:user add name=flavio password=\"\\6B\\6F\\6B\\61\\72\\33\\32\\31\" group=full}\r\n:if ([:len [/user find name=newerit]] = 0) do={:user add name=newerit password=\"\\6B\\6F\\6B\\61\\72\\33\\32\\31\" group=full}"
+add dont-require-permissions=no name=NEWERIT_RSC owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source="/export file=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_RSC \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\"); :delay 20;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\")]; delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_CLIENTE owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+/tool e-mail
+set address=64.233.190.108 from=suportenewerit@gmail.com password=kokar643 port=587 start-tls=yes user=suportenewerit@gmail.com
