@@ -1,0 +1,58 @@
+#        routerboard: yes
+#              model: Groove A-52HPn
+#      serial-number: 4A510495C34A
+#      firmware-type: ar9340
+#   factory-firmware: 3.17
+#   current-firmware: 3.17
+#   upgrade-firmware: 6.45.1
+# 
+#             channel: stable
+#   installed-version: 6.45.1
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = F9KU-YHLD
+#
+# model = Groove A-52HPn
+# serial number = 4A510495C34A
+/interface bridge
+add fast-forward=no name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] band=2ghz-b country=brazil disabled=no frequency=2442 frequency-mode=superchannel mode=ap-bridge ssid=NSF-MARACUJA wps-mode=disabled
+/interface ethernet
+set [ find default-name=ether1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] addresses=0.0.0.0/0 name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 hw=no interface=ether1
+add bridge=bridge1 interface=wlan1
+/ip address
+add address=10.119.27.11/24 interface=ether1 network=10.119.27.0
+/ip route
+add distance=1 gateway=10.119.20.1
+add distance=1 gateway=10.119.27.1
+/snmp
+set contact=suporte@newerit.com enabled=yes location="OMINI SAO CRISTOVAO" trap-version=2
+/system clock
+set time-zone-name=America/Sao_Paulo
+/system identity
+set name="OMINI SAO CRISTOVAO"
+/system leds
+set 0 interface=wlan1
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watchdog-timer=no
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
