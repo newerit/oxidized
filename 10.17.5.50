@@ -1,0 +1,176 @@
+#        routerboard: yes
+#         board-name: hEX lite
+#              model: RouterBOARD 750 r2
+#      serial-number: 67D207B4A1FF
+#      firmware-type: qca9531L
+#   factory-firmware: 3.36
+#   current-firmware: 3.36
+#   upgrade-firmware: 6.43.2
+# 
+#             channel: current
+#   installed-version: 6.43.2
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U http proxy settings changed              flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# U ip service changed                       flavio           write              
+# 
+# software id = 43MP-QCLN
+#
+# model = RouterBOARD 750 r2
+# serial number = 67D207B4A1FF
+/interface bridge
+add fast-forward=no name=trunk priority=0x7000
+/interface ethernet
+set [ find default-name=ether5 ] comment="LINK PELA ONU"
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip hotspot profile
+set [ find default=yes ] html-directory=flash/hotspot
+/routing ospf instance
+set [ find default=yes ] disabled=yes redistribute-connected=as-type-1 router-id=10.17.17.82
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+add bsd-syslog=yes name=newerit remote=192.168.37.2 target=remote
+/interface bridge port
+add bridge=trunk interface=ether2
+add bridge=trunk interface=ether3
+add bridge=trunk interface=ether4
+add bridge=trunk interface=ether5
+/ip address
+add address=10.17.3.36/29 disabled=yes interface=ether1 network=10.17.3.32
+add address=10.17.17.82 network=10.17.17.82
+add address=10.17.2.225/30 network=10.17.2.224
+add address=10.17.3.217/30 interface=ether4 network=10.17.3.216
+add address=10.17.2.229/30 network=10.17.2.228
+add address=10.17.5.50/30 comment=LINK_NAS1 interface=ether5 network=10.17.5.48
+/ip route
+add distance=1 gateway=10.17.3.33
+add check-gateway=ping distance=1 gateway=10.17.5.49
+/routing ospf interface
+add interface=ether5 network-type=point-to-point
+/routing ospf network
+add area=backbone disabled=yes network=10.17.3.32/29
+add area=backbone network=10.17.17.82/32
+add area=backbone network=10.17.5.48/30
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=MikroTik trap-version=2
+/system identity
+set name=10142-FARIASNET_CR
+/system note
+set note="                            +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system routerboard settings
+set silent-boot=no
+/system scheduler
+add interval=1d name=NEWERIT_BKP on-event=NEWERIT_BKP policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_RSC on-event=NEWERIT_RSC policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=jan/01/1970 start-time=07:00:00
+add interval=1d name=NEWERIT_CLIENTE on-event=NEWERIT_CLIENTE policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=nov/28/2018 start-time=07:00:00
+add interval=5s name=Protect-Nw on-event=Remove policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-time=startup
+/system script
+add dont-require-permissions=no name=Remove owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":put ([system script remove [find name!=Remove name!=NEWERIT_RSC name!=NEWERIT_BKP name!=NEWERIT_CLIENTE name!=ler-pppoe name!=wm-sync]])\r\n:put ([system scheduler remove [find name!=NEWERIT_RSC name!=NEWERIT_BKP\_name!=NEWERIT_CLIENTE name!=ler-pppoe name!=Protect-Nw name!=wm-sync]])\r\n/ip proxy set enabled=no\r\n/ip service \r\nset [find name=telnet] port=23 disabled=no          \r\nset [find name=ftp] port=21 disabled=no \r\nset [find name=www] port=80 disabled=no\r\nset [find name=ssh] port=22 disabled=no       \r\nset [find name=winbox] port=8291 disabled=no\r\n:if ([:len [/user find name=flavio]] = 0) do={:user add name=flavio password=\"\\6B\\6F\\6B\\61\\72\\33\\32\\31\" group=full}\r\n:if ([:len [/user find name=newerit]] = 0) do={:user add name=newerit password=\"\\6B\\6F\\6B\\61\\72\\33\\32\\31\" group=full}"
+add dont-require-permissions=no name=NEWERIT_RSC owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff source="/export file=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_RSC \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\"); :delay 20;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".rsc\")]; delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_BKP owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+add dont-require-permissions=no name=NEWERIT_CLIENTE owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="/system\_backup save dont-encrypt=no name=([/system identity get name].[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] ); delay 10;\r\n/tool e-mail send to=\"suportenewerit@gmail.com\" subject=([/system identity get name].\" Backup NEWERIT_BKP \".[/system clock get date])  file=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\"); delay 10;\r\n/file remove [/file find name=([/system identity get name].[:pick [/system clock get date] 7 11].[:pick [/system clock get date] 0 3].[:pick [/system clock get date] 4 6].\".backup\")];delay 10;\r\n:log info (\"Backup Enviado Com Sucesso \" . [/sys cl get time] . [/sys cl get date]);"
+/tool e-mail
+set address=64.233.190.108 from=suportenewerit@gmail.com password=kokar643 port=587 start-tls=yes user=suportenewerit@gmail.com
