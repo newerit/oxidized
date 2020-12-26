@@ -1,0 +1,59 @@
+#        routerboard: yes
+#              model: Groove A-52HPn
+#      serial-number: 411D02B61C2A
+#      firmware-type: ar9340
+#   factory-firmware: 3.07
+#   current-firmware: 3.19
+#   upgrade-firmware: 6.46.4
+# 
+#             channel: stable
+#   installed-version: 6.46.4
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# 
+# software id = QQSI-HSRG
+#
+# model = Groove A-52HPn
+# serial number = 411D02B61C2A
+/interface bridge
+add name=bridge1
+/interface wireless
+set [ find default-name=wlan1 ] band=2ghz-b/g basic-rates-a/g=6Mbps,9Mbps,12Mbps,18Mbps,24Mbps,36Mbps,48Mbps,54Mbps basic-rates-b="" country=brazil disabled=no frequency=2412 frequency-mode=manual-txpower mode=ap-bridge ssid=NSF_CAMPOS supported-rates-b="" wps-mode=disabled
+/interface list
+add name=WAN
+add name=LAN
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=177.66.65.102 target=remote
+/interface bridge port
+add bridge=bridge1 interface=wlan1
+add bridge=bridge1 interface=ether1
+/interface list member
+add interface=wlan1 list=WAN
+add interface=ether1 list=LAN
+/ip address
+add address=10.119.5.4/24 interface=ether1 network=10.119.5.0
+/ip route
+add distance=1 gateway=10.119.5.1
+/ip ssh
+set forwarding-enabled=remote
+/snmp
+set contact=suporte@newerit.com enabled=yes location="OMINI CAMPOS" trap-version=2
+/system identity
+set name=10118_NETSF-OMINI-2-4-CAMPOS
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system watchdog
+set watch-address=10.119.5.1
+/tool e-mail
+set address=177.66.65.102 from=suporte@newerit.com password=K0k@r321 port=587 start-tls=yes user=suporte@newerit.com
