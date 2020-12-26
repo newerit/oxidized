@@ -1,0 +1,87 @@
+#        routerboard: yes
+#              model: RouterBOARD 3011UiAS
+#      serial-number: 783E06CEF500
+#      firmware-type: ipq8060
+#   factory-firmware: 3.35
+#   current-firmware: 3.35
+#   upgrade-firmware: 6.44.3
+# 
+#             channel: stable
+#   installed-version: 6.44.3
+# 
+# Flags: U - undoable, R - redoable, F - floating-undo 
+#   ACTION                                   BY               POLICY             
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# U device changed                           glauberalencar   write              
+# 
+# software id = JVDS-QRGK
+#
+# model = RouterBOARD 3011UiAS
+# serial number = 783E06CEF500
+/interface bridge
+add name=Trunk protocol-mode=none
+/interface ethernet
+set [ find default-name=ether1 ] speed=100Mbps
+set [ find default-name=ether2 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PAINEL1 speed=100Mbps
+set [ find default-name=ether3 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PAINEL2 speed=100Mbps
+set [ find default-name=ether4 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PAINEL3 speed=100Mbps
+set [ find default-name=ether5 ] advertise=10M-half,10M-full,100M-half,100M-full comment=PAINEL4 speed=100Mbps
+set [ find default-name=ether6 ] comment=OMNI speed=100Mbps
+set [ find default-name=ether7 ] speed=100Mbps
+set [ find default-name=ether8 ] speed=100Mbps
+set [ find default-name=ether9 ] speed=100Mbps
+set [ find default-name=ether10 ] speed=100Mbps
+set [ find default-name=sfp1 ] advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full comment=LINK-SWITCH-CORE/NAS-CP
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=10138_SPEEDNETPA-CPP-SW-RADIOs
+/snmp community
+set [ find default=yes ] name=neweritmk
+/system logging action
+set 0 memory-lines=100
+set 1 disk-lines-per-file=100
+add bsd-syslog=yes name=newerit remote=170.231.184.4 target=remote
+/interface bridge port
+add bridge=Trunk hw=no interface=ether1
+add bridge=Trunk hw=no interface=ether2
+add bridge=Trunk hw=no interface=ether3
+add bridge=Trunk hw=no interface=ether4
+add bridge=Trunk hw=no interface=ether5
+add bridge=Trunk hw=no interface=sfp1
+add bridge=Trunk hw=no interface=ether6
+add bridge=Trunk hw=no interface=ether10
+add bridge=Trunk hw=no interface=ether9
+add bridge=Trunk hw=no interface=ether8
+add bridge=Trunk hw=no interface=ether7
+/ip address
+add address=10.22.4.138/30 interface=Trunk network=10.22.4.136
+/ip dns
+set servers=1.1.1.1
+/ip route
+add distance=1 gateway=10.22.4.137
+/snmp
+set contact=suportenewerit@gmail.com enabled=yes location=10138_SPEEDNETPA-CPP-SW-RADIOs trap-version=2
+/system clock
+set time-zone-name=America/Belem
+/system identity
+set name=10138_SPEEDNETPA-CPP-SW-RADIOs
+/system logging
+add action=newerit topics=account,info
+/system note
+set note="                        +-++-++-++-++-+ +-++-+\n                            |N||e||w||e||r| |I||T|\n                            +-++-++-++-++-+ +-++-+\n                            ++++|newerit.com|+++++\n                            +|contato@newerit.com|"
+/system ntp client
+set enabled=yes primary-ntp=200.160.0.8 secondary-ntp=200.189.40.8
+/system scheduler
+add interval=1d name=NEWERIT_BKPF on-event=NEWERIT_BKPF policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=04:31:33
+add interval=2d name=NEWERIT_BKPFR on-event="/file remove [find]" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-date=apr/09/2019 start-time=05:08:37
+/system script
+add dont-require-permissions=no name=NEWERIT_BKPF owner=flavio policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":local saveSysBackup true\r\n:local encryptSysBackup false\r\n:local saveRawExport true\r\n\r\n:local FTPServer \"170.231.184.4\"\r\n:local FTPPort 21\r\n:local FTPUser \"nwftp@newerit.com\"\r\n:local FTPPass \"*********\"\r\n\r\n\r\n:local ts [/system clock get time]\r\n:set ts ([:pick \$ts 0 2].[:pick \$ts 3 5].[:pick \$ts 6 8])\r\n:local ds [/system clock get date]\r\n:set ds ([:pick \$ds 7 11].[:pick \$ds 0 3].[:pick \$ds 4 6])\r\n\r\n:local fname ([/system identity get name].\"-\".\$ds.\"-\".\$ts )\r\n:local sfname (\"/\".\$fname)\r\n:if (\$saveSysBackup) do={\r\n  :if (\$encryptSysBackup = true) do={ /system backup save name=(\$sfname.\".backup\") }\r\n  :if (\$encryptSysBackup = false) do={ /system backup save dont-encrypt=yes name=(\$sfname.\".backup\") }\r\n  :log info message=\"System Backup Finished\"\r\n}\r\nif (\$saveRawExport) do={\r\n  /export file=(\$sfname.\".rsc\")\r\n  :log info message=\"Raw configuration script export Finished\"\r\n}\r\n:local backupFileName \"\"\r\n:foreach backupFile in=[/file find] do={\r\n  :set backupFileName (\"/\".[/file get \$backupFile name])\r\n  :if ([:typeof [:find \$backupFileName \$sfname]] != \"nil\") do={\r\n    /tool fetch address=\$FTPServer port=\$FTPPort src-path=\$backupFileName user=\$FTPUser mode=ftp password=\$FTPPass dst-path=\$backupFileName upload=yes\r\n  }\r\n}\r\n:delay 5s\r\n\r\n:log info message=\"Arquivos temporarios de Backup removidos\"\r\n:log info message=\"Backup Enviado com Sucesso!\""
